@@ -1,0 +1,81 @@
+/* CHRISTINE SHUE
+   DUE: FEBRUARY 17, 2017
+   PURPOSE: This application is programmed to ask the user for a date
+   and then performs the following actions: adds a day; allows the
+   user to change the date; shows a calendar of a month. */
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+#include "calendar.h"
+#include "calendar.cpp"
+
+void enterDate(Calendar& date)
+{
+    int m,d,y,w;
+    cout << "Enter a month (in digits) : ";
+    cin  >> m;
+    cout << "Enter a day : ";
+    cin  >> d;
+    cout << "Enter a year : ";
+    cin  >> y;
+    cout << "Enter the day of the week (SUNDAY = 1) : ";
+    cin  >> w;
+    date.setDate(m,d,y,w);
+}
+
+void print(Calendar date)
+{
+    cout << "The current date is : ";
+    date.displayDate();
+}
+
+int main()
+{
+    system("clear");
+    int selection;
+    bool done = false;
+    Calendar date;
+
+    enterDate(date);
+    print(date);
+    while (!done)
+    {
+	do
+	{
+	    cout << "\tEnter a selection: \n";
+	    cout << "\t\t1 : Add A Day\n";
+	    cout << "\t\t2 : Set Date\n";
+	    cout << "\t\t3 : Display Date\n";
+	    cout << "\t\t4 : Show Month\n";
+	    cout << "\t\t0 : QUIT\t\t";
+	    cin  >> selection;
+	    cout << endl << endl;
+	}while (selection != 1 && selection != 2 && selection != 3
+		&& selection != 4 && selection != 0);
+        switch(selection)
+        {
+            case 1:
+                date.advanceDate();
+                print(date);
+                break;
+            case 2:
+                enterDate(date);
+                print(date);
+                break;
+	    case 3:
+		print(date);
+		break;
+	    case 4:
+		date.displayMonth();
+		break;
+            case 0:
+                done = true;
+                break;
+            default:
+                break;
+        }
+    }
+    return 0;
+}

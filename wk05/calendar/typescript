@@ -1,0 +1,345 @@
+Script started on Fri 17 Feb 2017 03:02:16 AM EST
+cat ]0;cshue1@erdos:~/cisc2200/wk05/calendar[cshue1@erdos calendar]$ cat calendar.h
+/* CHRISTINE SHUE
+   DUE: FEBRUARY 17, 2017
+   PURPOSE: This interface calendar.h creates a class Calendar to
+   store the month, day, year, and day of the week.*/
+#ifndef CALENDAR_H
+#define CALENDAR_H
+
+class Calendar
+{
+    public:
+        Calendar();
+        Calendar(int,int,int,int);
+        void setDate(int,int,int,int);
+        void advanceDate();
+        void newMonth();
+        void displayDate();
+        string monthName();
+        string dayOfWeekName();
+        void displayMonth();
+    private:
+        int month,day,year,dayOfWeek;
+        static const int daysInMonth[12];
+};
+
+#endif
+]0;cshue1@erdos:~/cisc2200/wk05/calendar[cshue1@erdos calendar]$ cat calendar.cpp
+/* CHRISTINE SHUE
+   DUE: FEBRUARY 17, 2017
+   PURPOSE: This implementation, calendar.cpp contains all of the
+   member functions that are defined for class Calendar in calendar.h.*/
+Calendar::Calendar()
+{
+    month = 1;
+    day   = 1;
+    year  = 2017;
+    dayOfWeek = 0;
+}
+
+Calendar::Calendar(int m, int d, int y, int w)
+{
+    month     = m;
+    day       = d;
+    year      = y;
+    dayOfWeek = w;
+}
+
+void Calendar::setDate(int m, int d, int y, int w)
+{
+    month     = m;
+    day       = d;
+    year      = y;
+    dayOfWeek = w;
+}
+
+void Calendar::advanceDate()
+{
+    if (day >= daysInMonth[month-1])
+        newMonth();
+    else
+        day++;
+    if (dayOfWeek != 7)
+	dayOfWeek++;
+    else
+	dayOfWeek = 1;
+}
+
+void Calendar::newMonth()
+{
+    if (month == 12)
+    {
+        year++;
+        month = 1;
+    }
+    else
+    {
+        month++;
+    }
+    day = 1;
+}
+
+void Calendar::displayDate()
+{
+    cout << dayOfWeekName() << " : " << monthName() << " " << day << ", " << year << endl;
+}
+
+string Calendar::monthName()
+{
+    if (month == 1)
+        return "JANUARY";
+    else if (month == 2)
+        return "FEBRUARY";
+    else if (month == 3)
+        return "MARCH";
+    else if (month == 4)
+        return "APRIL";
+    else if (month == 5)
+        return "MAY";
+    else if (month == 6)
+        return "JUNE";
+    else if (month == 7)
+        return "JULY";
+    else if (month == 8)
+        return "AUGUST";
+    else if (month == 9)
+        return "SEPTEMBER";
+    else if (month == 10)
+        return "OCTOBER";
+    else if (month == 11)
+        return "NOVEMBER";
+    else
+        return "DECEMBER";
+}
+string Calendar::dayOfWeekName()
+{
+    if (dayOfWeek == 1)
+	return "SUNDAY";
+    else if (dayOfWeek == 2)
+	return "MONDAY";
+    else if (dayOfWeek == 3)
+	return "TUESDAY";
+    else if (dayOfWeek == 4)
+	return "WEDNESDAY";
+    else if (dayOfWeek == 5)
+	return "THURSDAY";
+    else if (dayOfWeek == 6)
+	return "FRIDAY";
+    else
+	return "SATURDAY";
+}
+
+void Calendar::displayMonth()
+{
+    int w = dayOfWeek;
+    cout << "\tMonth: " << monthName() << endl;
+    cout << " ----------------------------------------- " << endl;
+    cout << "| SUN | MON | TUE | WED | THU | FRI | SAT |" << endl;
+    cout << " ----------------------------------------- " << endl;
+    for (int i = 1; i < w; i++)
+    {
+	cout << "|     ";
+    }
+    for (int i = 1; i <= daysInMonth[month-1]; i++)
+    {
+	if (i < 10)
+	    cout << "|" << i<< "    ";
+	else
+	    cout << "|" << i << "   ";
+	w++;
+	if (w > 7)
+	{
+	    cout << "|" << endl;
+	    for (int i = 0; i < 2; i++)
+	        cout << "|     |     |     |     |     |     |     |" << endl;
+	    cout << " ----------------------------------------- " << endl;
+	    w = 1;
+	}
+    }
+    if (w < 7)
+	for (int i = w; w <= 7; w++)
+        {
+            cout << "|     ";
+        }
+    cout << "|" << endl;
+    for (int i = 0; i < 2; i++)
+	cout << "|     |     |     |     |     |     |     |" << endl;
+    cout << " ----------------------------------------- " << endl; 
+
+}
+
+const int Calendar::daysInMonth[12] = {31,28,31,30,31,30,31,31,30,31,30,31};
+]0;cshue1@erdos:~/cisc2200/wk05/calendar[cshue1@erdos calendar]$ cat c[Kmain.cpp
+/* CHRISTINE SHUE
+   DUE: FEBRUARY 17, 2017
+   PURPOSE: This application is programmed to ask the user for a date
+   and then performs the following actions: adds a day; allows the
+   user to change the date; shows a calendar of a month. */
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+#include "calendar.h"
+#include "calendar.cpp"
+
+void enterDate(Calendar& date)
+{
+    int m,d,y,w;
+    cout << "Enter a month (in digits) : ";
+    cin  >> m;
+    cout << "Enter a day : ";
+    cin  >> d;
+    cout << "Enter a year : ";
+    cin  >> y;
+    cout << "Enter the day of the week (SUNDAY = 1) : ";
+    cin  >> w;
+    date.setDate(m,d,y,w);
+}
+
+void print(Calendar date)
+{
+    cout << "The current date is : ";
+    date.displayDate();
+}
+
+int main()
+{
+    system("clear");
+    int selection;
+    bool done = false;
+    Calendar date;
+
+    enterDate(date);
+    print(date);
+    while (!done)
+    {
+	do
+	{
+	    cout << "\tEnter a selection: \n";
+	    cout << "\t\t1 : Add A Day\n";
+	    cout << "\t\t2 : Set Date\n";
+	    cout << "\t\t3 : Display Date\n";
+	    cout << "\t\t4 : Show Month\n";
+	    cout << "\t\t0 : QUIT\t\t";
+	    cin  >> selection;
+	    cout << endl << endl;
+	}while (selection != 1 && selection != 2 && selection != 3
+		&& selection != 4 && selection != 0);
+        switch(selection)
+        {
+            case 1:
+                date.advanceDate();
+                print(date);
+                break;
+            case 2:
+                enterDate(date);
+                print(date);
+                break;
+	    case 3:
+		print(date);
+		break;
+	    case 4:
+		date.displayMonth();
+		break;
+            case 0:
+                done = true;
+                break;
+            default:
+                break;
+        }
+    }
+    return 0;
+}
+]0;cshue1@erdos:~/cisc2200/wk05/calendar[cshue1@erdos calendar]$ g++ main.cpp
+]0;cshue1@erdos:~/cisc2200/wk05/calendar[cshue1@erdos calendar]$ ./a.out
+[3J[H[2JEnter a month (in digits) : 2
+Enter a day : 17
+Enter a year : 2017
+Enter the day of the week (SUNDAY = 1) : 6
+The current date is : FRIDAY : FEBRUARY 17, 2017
+	Enter a selection: 
+		1 : Add A Day
+		2 : Set Date
+		3 : Display Date
+		4 : Show Month
+		0 : QUIT		4
+
+
+	Month: FEBRUARY
+ ----------------------------------------- 
+| SUN | MON | TUE | WED | THU | FRI | SAT |
+ ----------------------------------------- 
+|     |     |     |     |     |1    |2    |
+|     |     |     |     |     |     |     |
+|     |     |     |     |     |     |     |
+ ----------------------------------------- 
+|3    |4    |5    |6    |7    |8    |9    |
+|     |     |     |     |     |     |     |
+|     |     |     |     |     |     |     |
+ ----------------------------------------- 
+|10   |11   |12   |13   |14   |15   |16   |
+|     |     |     |     |     |     |     |
+|     |     |     |     |     |     |     |
+ ----------------------------------------- 
+|17   |18   |19   |20   |21   |22   |23   |
+|     |     |     |     |     |     |     |
+|     |     |     |     |     |     |     |
+ ----------------------------------------- 
+|24   |25   |26   |27   |28   |     |     |
+|     |     |     |     |     |     |     |
+|     |     |     |     |     |     |     |
+ ----------------------------------------- 
+	Enter a selection: 
+		1 : Add A Day
+		2 : Set Date
+		3 : Display Date
+		4 : Show Month
+		0 : QUIT		2
+
+
+Enter a month (in digits) : 2
+Enter a day : 28
+Enter a year : 2017
+Enter the day of the week (SUNDAY = 1) : 5
+The current date is : THURSDAY : FEBRUARY 28, 2017
+	Enter a selection: 
+		1 : Add A Day
+		2 : Set Date
+		3 : Display Date
+		4 : Show Month
+		0 : QUIT		1
+
+
+The current date is : FRIDAY : MARCH 1, 2017
+	Enter a selection: 
+		1 : Add A Day
+		2 : Set Date
+		3 : Display Date
+		4 : Show Month
+		0 : QUIT		1
+
+
+The current date is : SATURDAY : MARCH 2, 2017
+	Enter a selection: 
+		1 : Add A Day
+		2 : Set Date
+		3 : Display Date
+		4 : Show Month
+		0 : QUIT		3
+
+
+The current date is : SATURDAY : MARCH 2, 2017
+	Enter a selection: 
+		1 : Add A Day
+		2 : Set Date
+		3 : Display Date
+		4 : Show Month
+		0 : QUIT		0
+
+
+]0;cshue1@erdos:~/cisc2200/wk05/calendar[cshue1@erdos calendar]$ exit
+exit
+
+Script done on Fri 17 Feb 2017 03:03:43 AM EST

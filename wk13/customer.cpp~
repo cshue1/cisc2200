@@ -1,0 +1,39 @@
+queue::queue()
+{
+    numOfCust = 0;
+}
+
+queue::~queue()
+{
+    cout << "HAVE A NICE DAY!" << endl;
+}
+
+bool queue::addCust(string n, int a, string s)
+{
+    bool answer = false;
+
+    if (numOfCust < MAX_CUST)
+    {
+	Cust[
+    }
+}
+
+void queue::removeCust()
+{
+}
+
+void queue::displayQueue()
+{
+}
+
+bool queue::hasRoom()
+{
+}
+
+bool queue::isEmpty()
+{
+}
+
+void changeStatusFirstCust(string s)
+{
+}

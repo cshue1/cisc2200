@@ -1,0 +1,13 @@
+Christine Shue
+DUE: 21 APRIL 2017
+Exercise 7: Discuss the efficiency of the queue's
+	 enqueue and dequeue operations when the ADT
+	 list's implementation is :
+	 	a) Array based
+		b) Link based
+
+a) In the case of an array based queue implementation, the enqueue operation is only possible given the condition that the array is not full.  This queue has a fixed size and limits the amount of items that the user is able to enter. The enqueue operation involves checking to see if the array is full and then adding a new item to the end of the array if the array is not ful.  The last steps would be to increase the count number and to set the back placeholder to the newly added item in the array.  The dequeue operation is as simple as setting the front placeholder to the second item in the array and decreasing the count number.
+
+b) In the case of a link based queue implementation, the enqueue operation is not limited.  Unlike the array based implementation, the size of the queue is dynamically allocated.  The enqueue operation starts off by allocating a new memory location for the new item to be stored in.  Then, it fills a temporary pointer with the data.  If the list is empty, the anchor is set to the temporary pointer.   Otherwise, the end pointer points to the temporary pointer.  The last steps are to increase the counte number and set the end pointer to the temporary pointer.  The dequeue operation involves setting the anchor to the item that the anchor was originally pointing to and decreasing the count number.
+
+In summary, both based implementations have their own ways of efficiency, but the real determining factor for using one over the other is an issue of a fixed versus dynamic list.

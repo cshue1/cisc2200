@@ -1,0 +1,95 @@
+doubleLL::doubleLL()
+{
+   anchor = NULL;
+   end    = NULL;
+}
+
+void doubleLL::addList(string s)
+{
+   struct nodeType *newNodePtr;
+
+   newNodePtr = new nodeType;
+   if (newNodePtr == NULL)
+   {
+      cout << "Error : new failed!" << endl;
+      return;
+   }
+
+   newNodePtr->name    = s;
+   newNodePtr->forward = NULL;
+   newNodePtr->reverse = NULL;
+
+   if (anchor == NULL)
+   {
+       anchor = newNodePtr;
+       end    = anchor;
+   }
+   else
+   {
+       newNodePtr->reverse = end;
+       end->forward        = newNodePtr;
+       end                 = newNodePtr;
+
+   }
+}
+
+void doubleLL::displayListF()
+{
+   struct nodeType *displayPtr;
+
+   displayPtr = anchor;
+   cout << endl << endl;
+   while (displayPtr != NULL)
+   {
+      cout << displayPtr->name << endl;
+      displayPtr = displayPtr->forward;
+   }
+   cout << endl << endl;
+}
+
+void doubleLL::displayListR()
+{
+    struct nodeType *displayPtr;
+
+    displayPtr = end;
+    cout << endl << endl;
+    while (displayPtr != NULL)
+    {
+	cout << displayPtr->name << endl;
+	displayPtr = displayPtr->reverse;
+    }
+    cout << endl << endl;
+}
+
+void doubleLL::deleteNode()
+{
+    struct nodeType *deletePtr;
+    
+    deletePtr = anchor;
+    string input;
+    cout << "\tPlease enter the name you would like to delete: ";
+    getline(cin,input);
+
+    while (deletePtr != NULL)
+    {
+	if (deletePtr->name == input)
+        {
+	    if (anchor == deletePtr)
+		anchor = deletePtr->forward;
+	    else if (end == deletePtr)
+		end    = deletePtr->reverse;
+	    else
+	    {
+		deletePtr->forward->reverse = deletePtr->reverse;
+		deletePtr->reverse->forward = deletePtr->forward;
+	    }
+		    
+	    delete deletePtr;
+	    cout << input << " has been deleted from the list." << endl;
+	    return;
+	}
+	deletePtr = deletePtr->forward;
+    }
+    cout << "ERROR: " << input << " was not found in the linked list." << endl;
+
+}

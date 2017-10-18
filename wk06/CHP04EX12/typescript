@@ -1,0 +1,264 @@
+Script started on Fri 24 Feb 2017 11:05:46 AM EST
+]0;cshue1@erdos:~/cisc2200/wk06/CHP04EX12[cshue1@erdos CHP04EX12]$ cat doubleLL.h
+/* CHRISTINE SHUE
+   DUE: FEBRUARY 24, 2017
+   PURPOSE: doubleLL.h is an interface that creates a struct nodeType
+   and a class doubleLL.  This creates a double linked list.
+*/
+#ifndef DOUBLELL_H
+#define DOUBLELL_H
+
+struct nodeType
+{
+   string name;
+   struct nodeType *forward;
+   struct nodeType *reverse;
+};
+
+class doubleLL 
+{
+   public:
+      doubleLL();
+      void addList(string);
+      void displayListF();
+      void displayListR();
+      void deleteNode();
+
+   private:
+      struct nodeType *anchor;
+      struct nodeType *end;
+};
+
+#endif
+]0;cshue1@erdos:~/cisc2200/wk06/CHP04EX12[cshue1@erdos CHP04EX12]$ cat doubleLL.cpp
+/* CHRISITNE SHUE
+   DUE: FEBRUARY 24, 2017
+   PURPOSE: doubleLL.cpp is an implementation of the class
+   doubleLL. It defines the member functions of the class that are
+   needed to perform the following actions: add, delete,
+   displayForward, displayBackward.*/
+doubleLL::doubleLL()
+{
+   anchor = NULL;
+   end    = NULL;
+}
+
+void doubleLL::addList(string s)
+{
+   struct nodeType *newNodePtr;
+
+   newNodePtr = new nodeType;
+   if (newNodePtr == NULL)
+   {
+      cout << "Error : new failed!" << endl;
+      return;
+   }
+
+   newNodePtr->name    = s;
+   newNodePtr->forward = NULL;
+   newNodePtr->reverse = NULL;
+
+   if (anchor == NULL)
+   {
+       anchor = newNodePtr;
+       end    = anchor;
+   }
+   else
+   {
+       newNodePtr->reverse = end;
+       end->forward        = newNodePtr;
+       end                 = newNodePtr;
+
+   }
+}
+
+void doubleLL::displayListF()
+{
+   struct nodeType *displayPtr;
+
+   displayPtr = anchor;
+   cout << endl << endl;
+   while (displayPtr != NULL)
+   {
+      cout << displayPtr->name << endl;
+      displayPtr = displayPtr->forward;
+   }
+   cout << endl << endl;
+}
+
+void doubleLL::displayListR()
+{
+    struct nodeType *displayPtr;
+
+    displayPtr = end;
+    cout << endl << endl;
+    while (displayPtr != NULL)
+    {
+	cout << displayPtr->name << endl;
+	displayPtr = displayPtr->reverse;
+    }
+    cout << endl << endl;
+}
+
+void doubleLL::deleteNode()
+{
+    struct nodeType *deletePtr;
+    
+    deletePtr = anchor;
+    string input;
+    cout << "\tPlease enter the name you would like to delete: ";
+    getline(cin,input);
+
+    while (deletePtr != NULL)
+    {
+	if (deletePtr->name == input)
+        {
+	    if (anchor == deletePtr)
+		anchor = deletePtr->forward;
+	    else if (end == deletePtr)
+		end    = deletePtr->reverse;
+	    else
+	    {
+		deletePtr->forward->reverse = deletePtr->reverse;
+		deletePtr->reverse->forward = deletePtr->forward;
+	    }
+		    
+	    delete deletePtr;
+	    cout << input << " has been deleted from the list." << endl;
+	    return;
+	}
+	deletePtr = deletePtr->forward;
+    }
+    cout << "ERROR: " << input << " was not found in the linked list." << endl;
+
+}
+]0;cshue1@erdos:~/cisc2200/wk06/CHP04EX12[cshue1@erdos CHP04EX12]$ cat main.cpp
+/* CHRISTINE SHUE
+   DUE: FEBRUARY 24, 2017
+   PURPOSE: main.cpp is an application that creates a double linked
+   list using the class doubleLL.  It allows the user to display the
+   list forward or backwards.  It also allows the user to add or
+   delete an item from the list.*/
+#include <iostream>
+using namespace std;
+
+#include "doubleLL.h"
+#include "doubleLL.cpp"
+
+int main()
+{
+   bool done;
+   char cmd;
+   string input;
+   doubleLL dll;
+
+   done = false;
+   system("clear");
+   while (!done)
+   {
+      cout << "Enter A=Add, F=Display Forward, R=Display Reverse, D=Delete or q=quit : ";
+      getline(cin, input);
+
+      cmd = input.at(0);
+      switch (cmd)
+      {
+         case 'A':
+         case 'a':
+            cout << "Enter a name to add to the list : ";
+            getline(cin, input);
+
+            dll.addList(input);
+         break;
+
+         case 'F':
+         case 'f':
+            dll.displayListF();
+         break;
+
+         case 'R':
+         case 'r':
+	     dll.displayListR();
+         break;
+
+         case 'D':
+         case 'd':
+	     dll.deleteNode();
+         break;
+	 
+         case 'Q':
+         case 'q':
+            done = true;
+         break;
+
+         default:
+            cout << "Sorry! Invalid selection was made!" << endl;
+         break;
+      }
+   }
+
+   return 0;
+}
+]0;cshue1@erdos:~/cisc2200/wk06/CHP04EX12[cshue1@erdos CHP04EX12]$ g++ [K mi[Kain.cpp
+]0;cshue1@erdos:~/cisc2200/wk06/CHP04EX12[cshue1@erdos CHP04EX12]$ a.[K[K./a.out
+[3J[H[2JEnter A=Add, F=Display Forward, R=Display Reverse, D=Delete or q=quit : A
+Enter a name to add to the list : Harry Potter
+Enter A=Add, F=Display Forward, R=Display Reverse, D=Delete or q=quit : A Severus S          
+Enter a name to add to the list : Severou  us Snape
+Enter A=Add, F=Display Forward, R=Display Reverse, D=Delete or q=quit : A
+Enter a name to add to the list : Hermione Granger
+Enter A=Add, F=Display Forward, R=Display Reverse, D=Delete or q=quit : A
+Enter a name to add to the list : Ron Weasley
+Enter A=Add, F=Display Forward, R=Display Reverse, D=Delete or q=quit : A
+Enter a name to add to the list : Draco Malfoy
+Enter A=Add, F=Display Forward, R=Display Reverse, D=Delete or q=quit : A
+Enter a name to add to the list : Cho Chang
+Enter A=Add, F=Display Forward, R=Display Reverse, D=Delete or q=quit : F
+
+
+Harry Potter
+Severus Snape
+Hermione Granger
+Ron Weasley
+Draco Malfoy
+Cho Chang
+
+
+Enter A=Add, F=Display Forward, R=Display Reverse, D=Delete or q=quit : R
+
+
+Cho Chang
+Draco Malfoy
+Ron Weasley
+Hermione Granger
+Severus Snape
+Harry Potter
+
+
+Enter A=Add, F=Display Forward, R=Display Reverse, D=Delete or q=quit : D
+	Please enter the name you would like to delete: Ron Wea       Severus Snape
+Severus Snape has been deleted from the list.
+Enter A=Add, F=Display Forward, R=Display Reverse, D=Delete or q=quit : F
+
+
+Harry Potter
+Hermione Granger
+Ron Weasley
+Draco Malfoy
+Cho Chang
+
+
+Enter A=Add, F=Display Forward, R=Display Reverse, D=Delete or q=quit : R
+
+
+Cho Chang
+Draco Malfoy
+Ron Weasley
+Hermione Granger
+Harry Potter
+
+
+Enter A=Add, F=Display Forward, R=Display Reverse, D=Delete or q=quit : q
+]0;cshue1@erdos:~/cisc2200/wk06/CHP04EX12[cshue1@erdos CHP04EX12]$ eixt[K[K[Kxit
+exit
+
+Script done on Fri 24 Feb 2017 11:07:27 AM EST

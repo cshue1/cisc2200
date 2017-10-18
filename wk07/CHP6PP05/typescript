@@ -1,0 +1,417 @@
+Script started on Fri 03 Mar 2017 01:10:58 AM EST
+]0;cshue1@erdos:~/cisc2200/wk07/CHP6PP05[cshue1@erdos CHP6PP05]$ cat stock,[K.h
+/* CHRISTINE SHUE
+   DUE: MARCH 3, 2017
+   PURPOSE: stock.h is a header file for the class Stock and the
+   struct stockType.  The class Stock creates a stock portfolio for
+   the user and the struct stockType creates structures for each stock
+   that the user buys.*/
+
+#ifndef STOCK_H
+#define STOCK_H
+
+struct stockType
+{
+    string symbol;
+    int qty;
+    double price;
+    stockType *link;
+};
+
+class Stock
+{
+private:
+    stockType *topStock;
+    stockType *lastStock;
+    double netWorth;
+    double totalWorth;
+public:
+    Stock();
+    void purchase(string,int,double); //push
+    void sell(); //pop
+    bool isEmpty();
+    void displayPortfolio();
+    void getNetWorth();
+};
+
+
+#endif
+]0;cshue1@erdos:~/cisc2200/wk07/CHP6PP05[cshue1@erdos CHP6PP05]$ cat stock.cpp
+/* CHRISTINE SHUE
+   DUE: MARCH 3, 2017
+   PURPOSE: stock.cpp is an implementation of the class Stock.  
+   It defines the method functions that enable the user to perform the
+   following actions: buy stocks, sell their most recent stock, view
+   their portfolio, and view their net worth.*/
+
+Stock::Stock()
+{
+    totalWorth = 0.00;
+    netWorth = 0.00;
+    topStock = NULL;
+    lastStock = NULL;
+}
+
+void Stock::purchase(string s,int q,double p)
+{
+    stockType* buyStock;
+    buyStock = new stockType;
+    buyStock->symbol = s;
+    buyStock->qty    = q;
+    buyStock->price  = p;
+    buyStock->link   = NULL;
+    if (topStock == NULL)
+	topStock = buyStock;
+    else
+	lastStock->link = buyStock;
+    lastStock = buyStock;
+
+    totalWorth += buyStock->price * buyStock->qty;
+    
+    cout << "You have bought " << buyStock->qty << " shares of "
+	 << buyStock->symbol << " at " << buyStock->price << endl << endl << endl;
+}
+
+void Stock::sell()
+{
+    stockType* deleteStock;
+    deleteStock = topStock;
+    char all;
+    double newCost, oldCost;
+    int dltQty;
+    cout << "What is the stock's current price?";
+    cin  >> newCost;
+    while (all != 'y' && all != 'Y' && all != 'n' && all != 'N')
+    {
+	cout << "Would you like to sell all of your shares?";
+	cin  >> all;
+	if (all == 'y' || all == 'Y')
+	{
+	    while (deleteStock != NULL)
+	    {
+		if (deleteStock == topStock && deleteStock == lastStock)
+		{
+		    newCost *= deleteStock->qty;
+		    oldCost = deleteStock->qty * deleteStock->price;
+		    topStock = NULL;
+		    lastStock = NULL;
+		}
+		else if (deleteStock->link == lastStock)
+	        {
+		    newCost *= deleteStock->link->qty;
+		    oldCost = deleteStock->link->qty * deleteStock->link->price;
+		    deleteStock->link = NULL;
+		    lastStock = deleteStock;
+		}
+		deleteStock = deleteStock->link; 
+	    }
+	    cout << "Most recent stock purchase was sold." << endl << endl << endl;
+	}
+	else
+        {
+	    cout << "How many shares would you like to share?";
+	    cin  >> dltQty;
+	    while (deleteStock != NULL)
+	    {
+		    
+		if (deleteStock == lastStock)
+		{
+		    deleteStock->qty -= dltQty;
+		    oldCost = dltQty * deleteStock->price;
+		    deleteStock->price = newCost;
+		    newCost *= dltQty;
+		    if (deleteStock == topStock)
+			topStock = deleteStock;
+		    lastStock = deleteStock;
+		}
+		deleteStock = deleteStock->link;
+      	    }
+	}
+    }
+    totalWorth -= newCost;
+    netWorth += newCost - oldCost;  
+}
+
+bool Stock::isEmpty()
+{
+    bool confirm = false;
+    if (topStock == NULL)
+	confirm = true;
+    return confirm;
+}
+
+void Stock::displayPortfolio()
+{
+    stockType *displayStock;
+    displayStock= topStock;
+    if (isEmpty())
+    {
+	cout << "Your stock portfolio is empty." << endl;
+	return;
+    }
+    cout << "SYMBOL\t"  << setw(9) << "QTY\t"  << setw(15) << "PRICE\t"
+	 << setw(14) << "COST" << endl;
+    while(displayStock != NULL)
+    {
+	cout << displayStock->symbol << "\t"  << setw(8) << displayStock->qty
+	     << "\t@" << fixed << showpoint << setprecision (2) << setw(8)
+	     << "$" << displayStock->price <<"\t"<< setw(8) << "$"
+	     << displayStock->price * displayStock->qty << endl;
+	displayStock = displayStock->link;
+    }
+    cout << endl << endl;
+    getNetWorth();
+ }
+
+void Stock::getNetWorth()
+{
+    cout << fixed << showpoint << setprecision (2);
+    cout << "Your net worth is:\t" <<  netWorth << endl << endl << endl;
+}
+]0;cshue1@erdos:~/cisc2200/wk07/CHP6PP05[cshue1@erdos CHP6PP05]$ cat main.cpp
+/* CHRISTINE SHUE
+   DUE: MARCH 3, 2017
+   PURPOSE: main.cpp is the application for the class Stock.  It
+   allows the user to create a stock portfolio and perform different
+   actions to it.*/
+
+#include <iostream>
+#include <string>
+#include <iomanip>
+
+using namespace std;
+
+#include "stock.h"
+#include "stock.cpp"
+
+int main()
+{
+    Stock portfolio;
+    system ("clear");
+    bool done = false;
+    string symbol;
+    double price;
+    int qty,selection;
+    while (!done)
+    {
+	do
+	{
+	    cout << "MAKE A SELECTION:\n";
+	    cout << "\t1| PURCHASE\n";
+	    cout << "\t2| SELL\n";
+	    cout << "\t3| DISPLAY PORTFOLIO\n";
+	    cout << "\t4| DISPLAY NET WORTH\n";
+	    cout << "\t0| QUIT\n";
+
+	    cin  >> selection;
+	} while (selection != 0 && selection != 1 && selection != 2
+		 && selection != 3 && selection != 4);
+	cout << endl << endl;
+
+	switch (selection)
+	{
+	case 1:
+	    cout << "Enter the symbol of the stock:\t";
+	    cin  >> symbol;
+	    cout << "Enter the number of stocks you would like to buy:\t";
+	    cin  >> qty;
+	    cout << "Enter the price of the stock:\t";
+	    cin  >> price;
+	    
+	    portfolio.purchase(symbol,qty,price);
+	    break;
+	case 2:
+	    portfolio.sell();
+	    break;
+	case 3:
+	    portfolio.displayPortfolio();
+	    break;
+	case 4:
+	    portfolio.getNetWorth();
+	    break;
+	case 0:
+	    done = true;
+	    break;
+	default:
+	    cout << "Please make a valid selection!" << endl;
+	    break;
+	}
+    }
+   
+    return 0;
+}
+]0;cshue1@erdos:~/cisc2200/wk07/CHP6PP05[cshue1@erdos CHP6PP05]$ g++ main.cpp
+]0;cshue1@erdos:~/cisc2200/wk07/CHP6PP05[cshue1@erdos CHP6PP05]$ ./a.out
+[3J[H[2JMAKE A SELECTION:
+	1| PURCHASE
+	2| SELL
+	3| DISPLAY PORTFOLIO
+	4| DISPLAY NET WORTH
+	0| QUIT
+1
+
+
+Enter the symbol of the stock:	SNAP
+Enter the number of stocks you would like to buy:	34
+Enter the price of the stock:	2.33
+You have bought 34 shares of SNAP at 2.33
+
+
+MAKE A SELECTION:
+	1| PURCHASE
+	2| SELL
+	3| DISPLAY PORTFOLIO
+	4| DISPLAY NET WORTH
+	0| QUIT
+2
+
+
+What is the stock's current price?5
+Would you like to sell all of your shares?y
+Most recent stock purchase was sold.
+
+
+MAKE A SELECTION:
+	1| PURCHASE
+	2| SELL
+	3| DISPLAY PORTFOLIO
+	4| DISPLAY NET WORTH
+	0| QUIT
+3
+
+
+Your stock portfolio is empty.
+MAKE A SELECTION:
+	1| PURCHASE
+	2| SELL
+	3| DISPLAY PORTFOLIO
+	4| DISPLAY NET WORTH
+	0| QUIT
+4
+
+
+Your net worth is:	90.78
+
+
+MAKE A SELECTION:
+	1| PURCHASE
+	2| SELL
+	3| DISPLAY PORTFOLIO
+	4| DISPLAY NET WORTH
+	0| QUIT
+1
+
+
+Enter the symbol of the stock:	CNN
+Enter the number of stocks you would like to buy:	40
+Enter the price of the stock:	4.32
+You have bought 40 shares of CNN at 4.32
+
+
+MAKE A SELECTION:
+	1| PURCHASE
+	2| SELL
+	3| DISPLAY PORTFOLIO
+	4| DISPLAY NET WORTH
+	0| QUIT
+1
+
+
+Enter the symbol of the stock:	YAHOO
+Enter the number of stocks you would like to buy:	23
+Enter the price of the stock:	13 .34
+You have bought 23 shares of YAHOO at 1.34
+
+
+MAKE A SELECTION:
+	1| PURCHASE
+	2| SELL
+	3| DISPLAY PORTFOLIO
+	4| DISPLAY NET WORTH
+	0| QUIT
+2
+
+
+What is the stock's current price?3
+Would you like to sell all of your shares?n
+How many shares would you like to share?20
+MAKE A SELECTION:
+	1| PURCHASE
+	2| SELL
+	3| DISPLAY PORTFOLIO
+	4| DISPLAY NET WORTH
+	0| QUIT
+3
+
+
+SYMBOL	     QTY	         PRICE	          COST
+CNN	      40	@       $4.32	       $172.80
+YAHOO	       3	@       $3.00	       $9.00
+
+
+Your net worth is:	123.98
+
+
+MAKE A SELECTION:
+	1| PURCHASE
+	2| SELL
+	3| DISPLAY PORTFOLIO
+	4| DISPLAY NET WORTH
+	0| QUIT
+2
+
+
+What is the stock's current price?3
+Would you like to sell all of your shares?y
+Most recent stock purchase was sold.
+
+
+MAKE A SELECTION:
+	1| PURCHASE
+	2| SELL
+	3| DISPLAY PORTFOLIO
+	4| DISPLAY NET WORTH
+	0| QUIT
+2
+
+
+What is the stock's current price?5
+Would you like to sell all of your shares?y
+Most recent stock purchase was sold.
+
+
+MAKE A SELECTION:
+	1| PURCHASE
+	2| SELL
+	3| DISPLAY PORTFOLIO
+	4| DISPLAY NET WORTH
+	0| QUIT
+4
+
+
+Your net worth is:	151.18
+
+
+MAKE A SELECTION:
+	1| PURCHASE
+	2| SELL
+	3| DISPLAY PORTFOLIO
+	4| DISPLAY NET WORTH
+	0| QUIT
+3
+
+
+Your stock portfolio is empty.
+MAKE A SELECTION:
+	1| PURCHASE
+	2| SELL
+	3| DISPLAY PORTFOLIO
+	4| DISPLAY NET WORTH
+	0| QUIT
+0
+
+
+]0;cshue1@erdos:~/cisc2200/wk07/CHP6PP05[cshue1@erdos CHP6PP05]$ exit
+exit
+
+Script done on Fri 03 Mar 2017 01:13:16 AM EST

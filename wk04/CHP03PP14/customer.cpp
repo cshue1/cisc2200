@@ -1,0 +1,172 @@
+/* CHRISTINE SHUE
+   DUE: FEBRUARY 10, 2017
+   PURPOSE: customer.cpp is the implementation for class Customer.  It
+   defines the methods that were declared in customer.h.*/
+
+#include "customer.h"
+
+#include <iostream>
+#include <iomanip>
+#include <string>
+
+using namespace std;
+
+Customer::Customer (string n)
+{
+    acctNum++;
+    name       = n;
+    bal        = 0.00;
+    numOfTrans = 0;
+    anchor     = NULL;
+    end        = NULL;
+}
+
+void Customer::displayCustInfo()
+{
+    cout << "      CUSTOMER ID: " << acctNum << endl;
+    cout << "    CUSTOMER NAME: " << name << endl;
+    cout << "BEGINNING BALANCE: " << fixed << showpoint << setprecision(2)
+	 << bal << endl;
+    cout << "  STATEMENT AVAIL: " << bill() << endl;
+}
+
+char Customer::bill()
+{
+    if (numOfTrans == 0)
+	return 'N';
+    else
+	return 'Y';
+}
+
+void Customer::addTrans(char t,double a,string m)
+{
+    struct transactionType *nodePtr;
+    numOfTrans++;
+    if (t == 'd' || t == 'D')
+	bal += a;
+    
+    if (anchor == NULL)
+    {
+	anchor = new transactionType;
+
+	anchor->transNum   = numOfTrans;
+	anchor->type       = t;
+	anchor->amt        = a;
+	anchor->merchant   = m;
+	anchor->link       = NULL;
+
+	end = anchor;
+    
+    }
+    else
+    {
+	nodePtr = new transactionType;
+
+	nodePtr->transNum   = numOfTrans;
+        nodePtr->type       = t;
+        nodePtr->amt        = a;
+        nodePtr->merchant   = m;
+        nodePtr->link       = NULL;
+
+        end->link = nodePtr;
+        end = nodePtr;
+    }
+
+}
+
+void Customer::pay()
+{
+    char ans;
+    double cost;
+    cout << "You owe: $" << fixed << showpoint
+	 << setprecision(2) << calcCredit() << endl;
+    cout << "Would you like to see your statement? (Y/N): ";
+    cin  >> ans;
+    if (ans == 'Y' || ans == 'y')
+	displayStatement();
+    cout << endl << endl << "How much would you like to pay now?: $";
+    cin  >> cost;
+    if (cost == calcCredit())
+    {
+	anchor = NULL;
+	numOfTrans = 0;
+    }
+    bal -= cost;
+    cout << endl << endl << "\t\t\tThank You." << endl;
+    cout << "\t\tYour new balance is: $" << fixed << showpoint
+	 << setprecision(2) << bal << endl;
+}
+
+void Customer::calcInterest()
+{
+    bal = bal * 1.0005;
+}
+
+double Customer::calcCredit()
+{
+    double CreditTot = 0.00;
+    struct transactionType *credit;
+    credit = anchor;
+    while (credit != end)
+    {
+	if (credit->type == 'C' || credit->type == 'c')
+	    CreditTot += credit->amt;
+	credit = credit->link;
+    }
+    if (credit->type == 'C' || credit->type == 'c')
+	CreditTot += credit->amt;
+return  CreditTot;
+	    
+}
+
+void Customer::displayStatement()
+{
+    struct transactionType *display;
+    if (anchor == NULL)
+    {
+	cout << "No transactions found." << endl;
+	return;
+    }
+
+    display = anchor;
+    displayCustInfo();
+    cout << endl << "\t\tINTEREST RATE: 0.05%" << endl;
+    calcInterest();
+    cout << "\t\tBALANCE WITH INTEREST: $" << fixed << showpoint
+	 << setprecision(2) << bal << endl << endl;
+    cout << "\tYOUR STATEMENT:" << endl << endl;
+    while (display != end)
+    {
+	cout << "\t" << setw(3) << display->transNum;
+	if (display->type == 'D')
+	{
+	    cout << "\t" << setw(7) << "DEBIT ";
+	}
+	else
+	    cout << "\t" << setw(7) << "CREDIT ";
+	cout << "\t" << setw(30) << display->merchant;
+	cout << setw(7) << "$" << fixed << showpoint
+	     << setprecision(2) << display->amt << endl;
+	display = display->link;
+    }
+    cout << "\t" << setw(3) << display->transNum;
+     if (display->type == 'D')
+     {
+	 cout << "\t" << setw(7) << "DEBIT ";
+     }
+     else
+	 cout << "\t" << setw(7) << "CREDIT ";
+     cout << "\t" << setw(30) << display->merchant;
+     cout << setw(7) << "$" << fixed << showpoint
+	  << setprecision(2) << display->amt << endl << endl;
+     cout << "\t                  ----------------------------" << endl;
+     cout << "\t                    TOTAL DUE: " << setw(7) << "$" << fixed
+	  << showpoint << setprecision(2) << calcCredit() << endl;
+    
+}
+
+Customer::~Customer()
+{
+}
+
+int Customer::acctNum = 0;

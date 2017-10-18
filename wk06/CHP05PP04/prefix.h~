@@ -1,0 +1,19 @@
+#ifndef PREFIX_H
+#define PREFIX_H
+
+class Prefix
+{
+public:
+    Prefix();
+    void getPrefixExp(string);
+    void populateStacks();
+    double evaluate (int,int,char);
+    double calculate();
+    int charToNum(char);
+private:
+    string prefixExp;
+    stack <int> operands;
+    stack <char> operators;
+};
+
+#endif

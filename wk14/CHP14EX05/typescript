@@ -1,0 +1,308 @@
+Script started on Thu 20 Apr 2017 04:18:08 PM EDT
+]0;cshue1@erdos:~/cisc2200/wk14/CHP14EX05[cshue1@erdos CHP14EX05]$ exitcat ArrayQueue.cpp[12Plogoutemacs chp14ex07.txtlogout[Kcat ArrayQueue.cpp[K[K[Kh
+/* CHRISTINE SHUE
+   DUE: 21 APRIL 2017
+   PURPOSE: ArrayQueue.h is an interface for the class ArrayQueue.  It
+   lists the private and public members of the class for an array
+   based queue.
+*/
+
+#ifndef ARRAYQUEUE_H
+#define ARRAYQUEUE_H
+
+class ArrayQueue
+{
+private:
+    static const int MAX = 50;
+    string items[MAX];
+    int front;
+    int back;
+    int count;
+public:
+    ArrayQueue();
+    ~ArrayQueue();
+    bool isEmpty() const;
+    bool enqueue(string newEntry);
+    bool dequeue();
+    void display();
+    int getNumberOfEntries();
+};
+
+#endif
+]0;cshue1@erdos:~/cisc2200/wk14/CHP14EX05[cshue1@erdos CHP14EX05]$ cat ArrayQueue.h[Kcpp
+/* CHRISTINE SHUE
+   DUE: 21 APRIL 2017
+   PURPOSE: ArrayQueue.cpp is an implementation of the interface,
+   ArrayQueue.h.  It defines the member functions for the class
+   ArrayQueue.*/
+
+ArrayQueue::ArrayQueue()
+{
+    front = 0;
+    back  = 0;
+    count = 0;
+}
+
+ArrayQueue::~ArrayQueue()
+{
+    front = 0;
+    back  = 0;
+    count = 0;
+}
+
+bool ArrayQueue::isEmpty() const
+{
+    if (count == 0)
+	return true;
+    else
+	return false;
+}
+
+bool ArrayQueue::enqueue(string newEntry)
+{
+    bool ins = false;
+    if (count < MAX)
+    {
+	items[count] = newEntry;
+	back = count;
+	count ++;
+	ins = true;
+    }
+    return ins;
+}
+
+bool ArrayQueue::dequeue()
+{
+    bool del = false;
+    cout << "\tREMOVING " << items[front] << endl;
+    if (!isEmpty())
+    {
+	front = (front + 1) % MAX;
+	count --;
+	del = true;
+    }
+    return del;
+}
+
+void ArrayQueue::display()
+{
+    cout << "DISPLAYING QUEUE : " << endl;
+    for (int i = front; i <= back; i++)
+	cout << items[i] << endl;
+    cout << endl << endl;
+}
+
+int ArrayQueue::getNumberOfEntries()
+{
+    return count;
+}
+]0;cshue1@erdos:~/cisc2200/wk14/CHP14EX05[cshue1@erdos CHP14EX05]$ cat ArrayQueue.cpp[2Ph[1PQueue.h[1PQueue.h[1PQueue.h[1PQueue.h[1PQueue.hLQueue.hiQueue.hnQueue.hkQueue.heQueue.hdQueue.h
+/* CHRISTINE SHUE
+   DUE: 21 APRIL 2017
+   PURPOSE: LinkedQueue is an interface for the class LinkedQueue.  It
+   lists the private and public members for a link based queue.*/
+
+#ifndef LINKEDQUEUE_H
+#define LINKEDQUEUE_H
+
+struct Node
+{
+    string item;
+    Node *next;
+};
+
+class LinkedQueue
+{
+private:
+    Node *anchor;
+    Node *end;
+    int count;
+public:
+    LinkedQueue();
+    ~LinkedQueue();
+    bool isEmpty() const;
+    bool enqueue(string newEntry);
+    bool dequeue();
+    void display();
+    int getNumberOfEntries();
+};
+
+#endif
+]0;cshue1@erdos:~/cisc2200/wk14/CHP14EX05[cshue1@erdos CHP14EX05]$ cat LinkedQueue.h[Kcpp
+/* CHRISTINE SHUE
+   DUE: 21 APRIL 2017
+   PURPOSE: LinkedQueue.cpp is an implementation for the interface,
+   LinkeqeQueue.h.  It defines the member functions for the class
+   LinkedQueue.
+*/
+
+LinkedQueue::LinkedQueue()
+{
+    anchor = NULL;
+    end    = NULL;
+    count  = 0;
+}
+
+LinkedQueue::~LinkedQueue()
+{
+    anchor = NULL;
+    end    = NULL;
+    count  = 0;
+}
+
+bool LinkedQueue::isEmpty() const
+{
+    if (anchor == NULL && count == 0)
+	return true;
+    else
+	return false;
+}
+
+bool LinkedQueue::enqueue(string newEntry)
+{
+    bool ins = false;
+    Node *add;
+    add = new Node;
+    if (add != NULL)
+    {
+	add->item = newEntry;
+	add->next = NULL;
+
+	if (anchor == NULL)
+	{
+	    anchor = add;
+	}
+	else
+	{
+	    end->next = add;
+	}
+	end = add;
+	count ++;
+	ins = true;
+    }
+    return ins;
+}
+
+bool LinkedQueue::dequeue()
+{
+    bool rem = false;
+    Node *dlt;
+    cout << "\tREMOVING " << anchor->item << endl;
+    dlt = anchor;
+    if (anchor == end)
+    {
+	anchor = NULL;
+	end    = NULL;
+    }
+    else
+	anchor = anchor->next;
+    dlt = NULL;
+    count --;
+    rem = true;
+    return rem;
+}
+
+void LinkedQueue::display()
+{
+    Node *disp;
+    disp = anchor;
+    cout << "DISPLAYING QUEUE : " << endl;
+    while (disp != NULL)
+    {
+	cout << disp->item << endl;
+	disp = disp->next;
+    }
+    cout << endl << endl;
+}
+
+int LinkedQueue::getNumberOfEntries()
+{
+    return count;
+}
+]0;cshue1@erdos:~/cisc2200/wk14/CHP14EX05[cshue1@erdos CHP14EX05]$ cat main.cpp
+/* CHRISTINE SHUE
+   DUE: 21 APRIL 2017
+   PURPOSE: main.cpp is an application that tests the following
+   classes: ArrayQueue and LinkedQueue.  Specifically, it tests the
+   function asked for in Exercise 5, which is getNumberOfEntries().
+*/
+
+#include <iostream>
+using namespace std;
+
+#include "LinkedQueue.h"
+#include "LinkedQueue.cpp"
+#include "ArrayQueue.h"
+#include "ArrayQueue.cpp"
+
+int main()
+{
+    ArrayQueue aq;
+    LinkedQueue lq;
+
+    cout << endl << "TESTING ArrayQueue : " << endl;
+    aq.enqueue("John");
+    aq.enqueue("Michael");
+    aq.enqueue("Wendy");
+    aq.enqueue("Tigerlily");
+    aq.display();
+    cout << "Number of Entries : " << aq.getNumberOfEntries() << endl;
+    aq.dequeue();
+    aq.display();
+    cout << "Number of Entries : " << aq.getNumberOfEntries() << endl;
+
+    cout << endl << "TESTING LinkedQueue : " << endl;
+    lq.enqueue("John");
+    lq.enqueue("Michael");
+    lq.enqueue("Wendy");
+    lq.enqueue("Tigerlily");
+    lq.display();
+    cout << "Number of Entries : " << lq.getNumberOfEntries() << endl;
+    lq.dequeue();
+    lq.display();
+    cout << "Number of Entries : " << lq.getNumberOfEntries() << endl;
+
+    return 0;
+}
+]0;cshue1@erdos:~/cisc2200/wk14/CHP14EX05[cshue1@erdos CHP14EX05]$ g++ main.cpp
+]0;cshue1@erdos:~/cisc2200/wk14/CHP14EX05[cshue1@erdos CHP14EX05]$ ./a.out
+
+TESTING ArrayQueue : 
+DISPLAYING QUEUE : 
+John
+Michael
+Wendy
+Tigerlily
+
+
+Number of Entries : 4
+	REMOVING John
+DISPLAYING QUEUE : 
+Michael
+Wendy
+Tigerlily
+
+
+Number of Entries : 3
+
+TESTING LinkedQueue : 
+DISPLAYING QUEUE : 
+John
+Michael
+Wendy
+Tigerlily
+
+
+Number of Entries : 4
+	REMOVING John
+DISPLAYING QUEUE : 
+Michael
+Wendy
+Tigerlily
+
+
+Number of Entries : 3
+]0;cshue1@erdos:~/cisc2200/wk14/CHP14EX05[cshue1@erdos CHP14EX05]$ exit
+exit
+
+Script done on Thu 20 Apr 2017 04:18:53 PM EDT

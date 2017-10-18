@@ -1,0 +1,22 @@
+#ifndef ARRAYQUEUE_H
+#define ARRAYQUEUE_H
+
+class ArrayQueue
+{
+private:
+    static const int MAX = 50;
+    string items[MAX];
+    int front;
+    int back;
+    int count;
+public:
+    ArrayQueue();
+    ~ArrayQueue();
+    bool isEmpty() const;
+    bool enqueue(string newEntry);
+    bool dequeue();
+    void display();
+    int getNumberOfEntries();
+};
+
+#endif

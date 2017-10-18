@@ -1,0 +1,375 @@
+Script started on Mon 10 Apr 2017 11:25:03 PM EDT
+]0;cshue1@erdos:~/cisc2200/wk11/CHP12PP01[cshue1@erdos CHP12PP01]$ cat S[KsortedL[K[K[K[K[K[K[KSortedLinkedList.h
+/* CHRISTINE SHUE
+   DUE: 7 APRIL 2017
+   PURPOSE: SortedLinkedList.h is an interface of the class
+   sortedLinkedList.  It contains the method functions to perform the
+   following actions: add, delete, display list, check if empty.*/
+#ifndef SORTEDLINKEDLIST_H
+#define SORTEDLINKEDLIST_H
+
+struct nameDirType
+{
+   string name;
+   string occupation;
+
+   struct nameDirType *next;
+};
+
+class sortedLinkedList
+{
+public:
+    sortedLinkedList();
+    bool insertSorted(string, string);
+    bool removeSorted(string);
+    bool isEmpty();
+    void displaySortedList();
+    
+private:
+    struct nameDirType *anchorPtr;
+    int numOfElements;
+};
+
+#endif
+]0;cshue1@erdos:~/cisc2200/wk11/CHP12PP01[cshue1@erdos CHP12PP01]$ cat SortedLinkedList.cpp
+/* CHRISTINE SHUE
+   DUE: 7 APRIL 2017
+   PURPOSE: SortedLinkedList.cpp is an implementation of the class
+   sortedLinkedList.*/
+sortedLinkedList::sortedLinkedList()
+{
+    anchorPtr     = NULL;
+    numOfElements = 0;
+}
+
+bool sortedLinkedList::insertSorted(string n, string o)
+{
+   struct nameDirType *prevPtr, *searchPtr, *newDataPtr;;
+   bool rc;
+
+   rc = false;
+
+   newDataPtr = new nameDirType;
+   if (newDataPtr != NULL)
+   {
+      newDataPtr->name       = n;
+      newDataPtr->occupation = o;
+      newDataPtr->next       = NULL;
+
+      if (anchorPtr == NULL)
+      {
+         anchorPtr = newDataPtr;
+
+         numOfElements++;
+         rc = true;
+      }
+      else
+      {
+         prevPtr   = NULL;
+         searchPtr = anchorPtr;
+
+         while (searchPtr != NULL && searchPtr->name < n)
+         {
+            prevPtr   = searchPtr;
+            searchPtr = searchPtr->next;
+         }
+
+         if (searchPtr == NULL)
+         {
+            prevPtr->next = newDataPtr;
+         }
+         else if (prevPtr == NULL)
+         {
+            anchorPtr        = newDataPtr;
+            newDataPtr->next = searchPtr;
+         }
+         else
+         {
+            prevPtr->next    = newDataPtr;
+            newDataPtr->next = searchPtr;
+         }
+
+         numOfElements++;
+         rc = true;
+      }
+   }
+   else
+   {
+      cout << "ERROR : new failed!" << endl;
+   }
+      
+   return rc;
+}
+
+bool sortedLinkedList::removeSorted(string n)
+{
+    bool rc = false;
+    nameDirType *deletePtr;
+    deletePtr = anchorPtr;
+    if (anchorPtr->name == n)
+    {
+	anchorPtr = deletePtr->next;
+	rc = true;
+	displaySortedList();
+    }
+    else 
+    {
+	while (deletePtr != NULL)
+        {
+	    if (deletePtr->next->name == n)
+	    {
+		deletePtr->next = deletePtr->next->next;
+		rc = true;
+		displaySortedList();
+		deletePtr = NULL;
+
+	    }
+	    else
+		deletePtr = deletePtr->next;
+	}
+    }
+    if (!rc)
+        cout << "ERROR : Unable to delete " << n << endl;
+
+    return rc;
+}
+
+bool sortedLinkedList::isEmpty()
+{
+    bool rc = false;
+    if (numOfElements == 0)
+	rc = true;
+    return rc;
+}
+
+void sortedLinkedList::displaySortedList()
+{
+    int counter = 1;
+    nameDirType *displayPtr;
+    displayPtr = anchorPtr;
+
+    if (isEmpty())
+	cout << "ERROR : No names in the list" << endl;
+    else
+    {
+	cout << "\tNAME\t\t\tOCCUPATION\t" << endl;
+	while(displayPtr != NULL)
+	{
+	    cout << counter << ")\t"<< displayPtr->name
+		 << "\t\t\t" << displayPtr->occupation << endl;
+	    counter ++;
+	    displayPtr = displayPtr->next;
+	}
+	cout << endl << endl;
+
+    }
+    
+}
+]0;cshue1@erdos:~/cisc2200/wk11/CHP12PP01[cshue1@erdos CHP12PP01]$ cat  so[K[K[KMa[K[Km[Kmain.cpp
+/* CHRISTINE SHUE
+   DUE: 7 APRIL 2017
+   PURPOSE: This application tests the methods of the class sortedLinkedList.*/
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+#include "SortedLinkedList.h"
+#include "SortedLinkedList.cpp"
+
+int main()
+{
+   bool done;
+   int  choice;
+   string sname, soccupation;
+   sortedLinkedList studentDir;
+
+   done = false;
+   while (done == false)
+   {
+      cout << " 1) Insert new student " << endl;
+      cout << " 2) Remove student " << endl;
+      cout << " 3) Display Student Directory" << endl;
+      cout << " 0) Exit               " << endl;
+      cout << " Enter a selection : ";
+      cin  >> choice;
+
+      switch (choice)
+      {
+         case 1:
+            cout << "       Enter a student name : ";
+            cin  >> sname;
+            cout << " Enter a student occupation : ";
+            cin  >> soccupation;
+ 
+            if (studentDir.insertSorted(sname, soccupation))
+               cout << "Insert was done!" << endl;
+            else
+               cout << "ERROR : Insert not done!" << endl;
+
+            studentDir.displaySortedList();
+         break;
+
+         case 2:
+	     cout << "Enter the name of the student that you would like to delete : ";
+	     cin  >> sname;
+	     studentDir.removeSorted(sname);
+	 break;
+         case 3:
+	     studentDir.displaySortedList();
+         break;
+         case 0:
+            done = true;
+         break;
+      
+         default:
+            cout << "Sorry! Invalid choice was made!" << endl;
+         break;
+      }
+   }
+
+   return 0;
+}
+]0;cshue1@erdos:~/cisc2200/wk11/CHP12PP01[cshue1@erdos CHP12PP01]$ g++ main.cpp
+]0;cshue1@erdos:~/cisc2200/wk11/CHP12PP01[cshue1@erdos CHP12PP01]$ a[K./a.out
+ 1) Insert new student 
+ 2) Remove student 
+ 3) Display Student Directory
+ 0) Exit               
+ Enter a selection : 1
+       Enter a student name : Sarah   h
+ Enter a student occupation : senat     Senator
+Insert was done!
+	NAME			OCCUPATION	
+1)	Sarah			Senator
+
+
+ 1) Insert new student 
+ 2) Remove student 
+ 3) Display Student Directory
+ 0) Exit               
+ Enter a selection : 2 1
+       Enter a student name : Katy
+ Enter a student occupation : Lawyer
+Insert was done!
+	NAME			OCCUPATION	
+1)	Katy			Lawyer
+2)	Sarah			Senator
+
+
+ 1) Insert new student 
+ 2) Remove student 
+ 3) Display Student Directory
+ 0) Exit               
+ Enter a selection : 1
+       Enter a student name : Mega
+ Enter a student occupation : Doctor
+Insert was done!
+	NAME			OCCUPATION	
+1)	Katy			Lawyer
+2)	Mega			Doctor
+3)	Sarah			Senator
+
+
+ 1) Insert new student 
+ 2) Remove student 
+ 3) Display Student Directory
+ 0) Exit               
+ Enter a selection : 1
+       Enter a student name : Saya
+ Enter a student occupation : Journalist
+Insert was done!
+	NAME			OCCUPATION	
+1)	Katy			Lawyer
+2)	Mega			Doctor
+3)	Sarah			Senator
+4)	Saya			Journalist
+
+
+ 1) Insert new student 
+ 2) Remove student 
+ 3) Display Student Directory
+ 0) Exit               
+ Enter a selection : 1
+       Enter a student name : Camille
+ Enter a student occupation : Teacher
+Insert was done!
+	NAME			OCCUPATION	
+1)	Camille			Teacher
+2)	Katy			Lawyer
+3)	Mega			Doctor
+4)	Sarah			Senator
+5)	Saya			Journalist
+
+
+ 1) Insert new student 
+ 2) Remove student 
+ 3) Display Student Directory
+ 0) Exit               
+ Enter a selection : 2
+Enter the name of the student that you would like to delete : Camille
+	NAME			OCCUPATION	
+1)	Katy			Lawyer
+2)	Mega			Doctor
+3)	Sarah			Senator
+4)	Saya			Journalist
+
+
+ 1) Insert new student 
+ 2) Remove student 
+ 3) Display Student Directory
+ 0) Exit               
+ Enter a selection : 2
+Enter the name of the student that you would like to delete : Katy
+	NAME			OCCUPATION	
+1)	Mega			Doctor
+2)	Sarah			Senator
+3)	Saya			Journalist
+
+
+ 1) Insert new student 
+ 2) Remove student 
+ 3) Display Student Directory
+ 0) Exit               
+ Enter a selection : 2
+Enter the name of the student that you would like to delete : Saya
+	NAME			OCCUPATION	
+1)	Mega			Doctor
+2)	Sarah			Senator
+
+
+ 1) Insert new student 
+ 2) Remove student 
+ 3) Display Student Directory
+ 0) Exit               
+ Enter a selection : 2
+Enter the name of the student that you would like to delete : Sat rah
+	NAME			OCCUPATION	
+1)	Mega			Doctor
+
+
+ 1) Insert new student 
+ 2) Remove student 
+ 3) Display Student Directory
+ 0) Exit               
+ Enter a selection : 2
+Enter the name of the student that you would like to delete : Mega
+	NAME			OCCUPATION	
+
+
+ 1) Insert new student 
+ 2) Remove student 
+ 3) Display Student Directory
+ 0) Exit               
+ Enter a selection : 3
+	NAME			OCCUPATION	
+
+
+ 1) Insert new student 
+ 2) Remove student 
+ 3) Display Student Directory
+ 0) Exit               
+ Enter a selection : 0
+]0;cshue1@erdos:~/cisc2200/wk11/CHP12PP01[cshue1@erdos CHP12PP01]$ exit
+exit
+
+Script done on Mon 10 Apr 2017 11:26:55 PM EDT

@@ -1,0 +1,252 @@
+Script started on Fri 03 Mar 2017 11:25:59 AM EST
+]777;notify;Command completed;emacs after.cpp]0;cshue1@linux-user-116:~/cisc2200/wk07/trycatch]7;file://linux-user-116.dsm.fordham.edu/u/erdos/students/cshue1/cisc2200/wk07/trycatch[cshue1@linux-user-116 trycatch]$ cat before.cpp
+#include <ctime>
+#include <iostream>
+#include <string>
+
+#define MAX_ITEMS 5
+using namespace std;
+
+int main()
+{
+    int selection, counter = 0;
+    bool done = false;
+    string todo[MAX_ITEMS];
+    time_t rawtime;
+    struct tm * timeinfo;
+
+    system("clear");
+    time ( &rawtime );
+    timeinfo = localtime ( &rawtime );
+    cout << "The current date/time is:\t" << asctime (timeinfo) << endl;
+    cout << "Please enter your schedule for today: " << endl;
+    while (!done)
+    {
+	cout << "\t1| to add" << endl;
+	cout << "\t2| to display" << endl;
+	cout << "\t0| to quit" << endl;
+	cin  >> selection;
+	switch(selection)
+	{
+	case 1:
+	    
+	    cout << "What do you have to do today?" << endl;
+	    cin.ignore();
+	    getline(cin, todo[counter]);
+	    cout << todo[counter] << " was added to your list." << endl << endl;
+	    counter ++;
+	    break;
+	case 2:
+	    cout << "YOUR TODO LIST: " << endl;
+	    for (int i = 0; i <= MAX_ITEMS; i++)
+	    {
+		if (todo[i] != "")
+		    cout << i+1 << ")\t" << todo[i] << endl << endl;
+	    }
+	    break;
+	case 0:
+	    cout << "HAVE A GREAT DAY, AND STAY PRODUCTIVE!" << endl;
+	    done = true;
+	    break;
+	}
+    }
+    return 0;
+
+}
+]777;notify;Command completed;cat before.cpp]0;cshue1@linux-user-116:~/cisc2200/wk07/trycatch]7;file://linux-user-116.dsm.fordham.edu/u/erdos/students/cshue1/cisc2200/wk07/trycatch[cshue1@linux-user-116 trycatch]$ cat after.cpp
+/* CHRISTINE SHUE
+   DUE: FEBRUARY 3, 2017
+   PURPOSE: THIS PROGRAM USES TRY/CATCH STATEMENTS TO CATCH
+   SEGMENTATION FAULTS FROM THE PROGRAM.*/
+
+#include <ctime>
+#include <iostream>
+#include <string>
+
+#define MAX_ITEMS 5
+using namespace std;
+
+int main()
+{
+    int selection, counter = 0;
+    bool done = false;
+    string todo[MAX_ITEMS];
+    time_t rawtime;
+    struct tm * timeinfo;
+
+    system("clear");
+    time ( &rawtime );
+    timeinfo = localtime ( &rawtime );
+    cout << "The current date/time is:\t" << asctime (timeinfo) << endl;
+    cout << "Please enter your schedule for today: " << endl;
+    while (!done)
+    {
+	cout << "\t1| to add" << endl;
+	cout << "\t2| to display" << endl;
+	cout << "\t0| to quit" << endl;
+	cin  >> selection;
+	switch(selection)
+	{
+	case 1:
+	    try
+	    {
+		cout << "What do you have to do today?" << endl;
+		cin.ignore();
+		getline(cin, todo[counter]);
+		cout << todo[counter] << " was added to your list." << endl << endl;
+		counter ++;
+	    }
+	    catch (out_of_range oor)
+	    {
+		cout << oor.what() << endl;
+	    }
+	    catch (runtime_error re)
+	    {
+		cout << re.what() << endl;
+	    }
+	    break;
+	case 2:
+	    try
+	    {
+		cout << "YOUR TODO LIST: " << endl;
+		for (int i = 0; i < MAX_ITEMS; i++)
+		{
+		    if (todo[i] != "")
+			cout << i+1 << ")\t" << todo[i] << endl << endl;
+		}
+	    }
+	    catch (out_of_range oor)
+	    {
+		cout << oor.what() << endl;
+	    }
+	    catch (range_error r)
+	    {
+		cout << r.what() << endl;
+	    }
+	    catch (runtime_error re)
+	    {
+		cout << re.what() << endl;
+	    }
+	    catch (logic_error le)
+	    {
+		cout << le.what() << endl;
+	    }
+	    catch (invalid_argument ia)
+	    {
+		cout << ia.what() << endl;
+	    }
+	    catch (length_error len)
+	    {
+		cout << len.what() << endl;
+	    }
+	    catch (overflow_error oe)
+	    {
+		cout << oe.what() << endl;
+	    }
+	    break;
+	case 0:
+	    cout << "HAVE A GREAT DAY, AND STAY PRODUCTIVE!" << endl;
+	    done = true;
+	    break;
+	}
+    }
+    return 0;
+
+}
+]777;notify;Command completed;cat after.cpp]0;cshue1@linux-user-116:~/cisc2200/wk07/trycatch]7;file://linux-user-116.dsm.fordham.edu/u/erdos/students/cshue1/cisc2200/wk07/trycatch[cshue1@linux-user-116 trycatch]$ bef[K[K[Kc++ -o before before.cpp
+]777;notify;Command completed;c++ -o before before.cpp]0;cshue1@linux-user-116:~/cisc2200/wk07/trycatch]7;file://linux-user-116.dsm.fordham.edu/u/erdos/students/cshue1/cisc2200/wk07/trycatch[cshue1@linux-user-116 trycatch]$ bef[K[K[K./before
+[3J[H[2JThe current date/time is:	Fri Mar  3 11:26:27 2017
+
+Please enter your schedule for today: 
+	1| to add
+	2| to display
+	0| to quit
+1
+What do you have to do today?
+Datat Struc        Structures
+Data Structures was added to your list.
+
+	1| to add
+	2| to display
+	0| to quit
+2
+YOUR TODO LIST: 
+1)	Data Structures
+
+Segmentation fault (core dumped)
+]777;notify;Command completed;./before]0;cshue1@linux-user-116:~/cisc2200/wk07/trycatch]7;file://linux-user-116.dsm.fordham.edu/u/erdos/students/cshue1/cisc2200/wk07/trycatch[cshue1@linux-user-116 trycatch]$ c++ -o after after.cpp
+\.[01m[Kafter.cpp:[m[K In function ‘[01m[Kint main()[m[K’:
+[01m[Kafter.cpp:86:6:[m[K [01;35m[Kwarning: [m[Kexception of type ‘[01m[Kstd::overflow_error[m[K’ will be caught
+      [01;35m[Kcatch[m[K (overflow_error oe)
+      [01;35m[K^~~~~[m[K
+[01m[Kafter.cpp:70:6:[m[K [01;35m[Kwarning: [m[K   by earlier handler for ‘[01m[Kstd::runtime_error[m[K’
+      [01;35m[Kcatch[m[K (runtime_error re)
+      [01;35m[K^~~~~[m[K
+[01m[Kafter.cpp:78:6:[m[K [01;35m[Kwarning: [m[Kexception of type ‘[01m[Kstd::invalid_argument[m[K’ will be caught
+      [01;35m[Kcatch[m[K (invalid_argument ia)
+      [01;35m[K^~~~~[m[K
+[01m[Kafter.cpp:74:6:[m[K [01;35m[Kwarning: [m[K   by earlier handler for ‘[01m[Kstd::logic_error[m[K’
+      [01;35m[Kcatch[m[K (logic_error le)
+      [01;35m[K^~~~~[m[K
+/a]777;notify;Command completed;c++ -o after after.cpp]0;cshue1@linux-user-116:~/cisc2200/wk07/trycatch]7;file://linux-user-116.dsm.fordham.edu/u/erdos/students/cshue1/cisc2200/wk07/trycatch[cshue1@linux-user-116 trycatch]$ \./a[K[K[K[K./aftre[K[Ker
+[3J[H[2JThe current date/time is:	Fri Mar  3 11:26:56 2017
+
+Please enter your schedule for today: 
+	1| to add
+	2| to display
+	0| to quit
+1
+What do you have to do today?
+Data Structures
+Data Structures was added to your list.
+
+	1| to add
+	2| to display
+	0| to quit
+2
+YOUR TODO LIST: 
+1)	Data Structures
+
+	1| to add
+	2| to display
+	0| to quit
+Make Lunch
+HAVE A GREAT DAY, AND STAY PRODUCTIVE!
+]777;notify;Command completed;./after]0;cshue1@linux-user-116:~/cisc2200/wk07/trycatch]7;file://linux-user-116.dsm.fordham.edu/u/erdos/students/cshue1/cisc2200/wk07/trycatch[cshue1@linux-user-116 trycatch]$ ./after
+[3J[H[2JThe current date/time is:	Fri Mar  3 11:27:20 2017
+
+Please enter your schedule for today: 
+	1| to add
+	2| to display
+	0| to quit
+1
+What do you have to do today?
+Data Structures
+Data Structures was added to your list.
+
+	1| to add
+	2| to display
+	0| to quit
+1
+What do you have to do today?
+Make Lunch
+Make Lunch was added to your list.
+
+	1| to add
+	2| to display
+	0| to quit
+2
+YOUR TODO LIST: 
+1)	Data Structures
+
+2)	Make Lunch
+
+	1| to add
+	2| to display
+	0| to quit
+0
+HAVE A GREAT DAY, AND STAY PRODUCTIVE!
+]777;notify;Command completed;./after]0;cshue1@linux-user-116:~/cisc2200/wk07/trycatch]7;file://linux-user-116.dsm.fordham.edu/u/erdos/students/cshue1/cisc2200/wk07/trycatch[cshue1@linux-user-116 trycatch]$ exit
+exit
+
+Script done on Fri 03 Mar 2017 11:27:40 AM EST

@@ -1,0 +1,255 @@
+Script started on Fri 28 Apr 2017 11:32:36 AM EDT
+]777;notify;Command completed;logout]0;cshue1@linux-user-110:~/cisc2200/wk15/CHP16EX14]7;file://linux-user-110.dsm.fordham.edu/u/erdos/students/cshue1/cisc2200/wk15/CHP16EX14[cshue1@linux-user-110 CHP16EX14]$ cat btree.h
+/* CHRISTINE SHUE
+   DUE: 28 APRIL 2017
+   PURPOSE: This assignment was to create a Level-Order Traversal
+   Algorithm for the class btree.
+*/
+#ifndef BTREE_H
+#define BTREE_H
+
+struct node
+{
+    int key;
+    node *left;
+    node *right;
+};
+
+class btree
+{
+public:
+    btree();
+    ~btree();
+
+    void insert(int);
+    node *search(int);
+    void destroy_tree();
+    void printInOrder();
+    void printPreOrder();
+    void printPostOrder();
+    void printLevelOrder();
+    
+private:
+    void destroy_tree(node *);
+    void insert(int, node *);
+    node *search (int, node *);
+    void inOrder (node *);
+    void preOrder(node *);
+    void postOrder(node *);
+    void levelOrder(node *,int);
+    int height (node *);
+    node *root;
+};
+
+#endif
+]777;notify;Command completed;cat btree.h]0;cshue1@linux-user-110:~/cisc2200/wk15/CHP16EX14]7;file://linux-user-110.dsm.fordham.edu/u/erdos/students/cshue1/cisc2200/wk15/CHP16EX14[cshue1@linux-user-110 CHP16EX14]$ cat btree.cpp
+btree::btree()
+{
+    root = NULL;
+}
+
+btree::~btree()
+{
+}
+
+void btree::destroy_tree(node *leaf)
+{
+    if (leaf != NULL)
+    {
+	destroy_tree(leaf->left);
+	destroy_tree(leaf->right);
+	delete leaf;
+    }
+}
+
+void btree::insert(int k, node *leaf)
+{
+    if (k < leaf->key)
+    {
+	if (leaf->left != NULL)
+	    insert(k, leaf->left);
+	else
+        {
+	    leaf->left = new node;
+	    leaf->left->key   = k;
+	    leaf->left->left  = NULL;
+	    leaf->left->right = NULL;
+	}
+    }
+    else if (k >= leaf->key)
+    {
+	if (leaf->right != NULL)
+	    insert(k, leaf->right);
+	else
+	{
+	    leaf->right = new node;
+	    leaf->right->key   = k;
+	    leaf->right->left  = NULL;
+	    leaf->right->right = NULL;
+	}
+    }
+}
+
+node *btree::search(int k, node *leaf)
+{
+    if (leaf != NULL)
+    {
+	if (k == leaf->key)
+	    return leaf;
+	if (k < leaf->key)
+	    return search (k, leaf->left);
+	else
+	    return NULL;
+    }
+}
+
+void btree::insert(int k)
+{
+    if (root != NULL)
+	insert(k, root);
+    else
+    {
+	root = new node;
+	root -> key   = k;
+	root -> left  = NULL;
+	root -> right = NULL;
+    }
+}
+
+node *btree::search(int k)
+{
+    return search(k, root);
+}
+
+void btree::destroy_tree()
+{
+    destroy_tree(root);
+}
+
+void btree::printPostOrder()
+{
+    postOrder(root);
+    cout << endl;
+}
+
+void btree::postOrder(node *leaf)
+{
+    if (leaf != NULL)
+    {
+	postOrder(leaf->left);
+	postOrder(leaf->right);
+	cout << leaf->key << "   ";
+    }
+}
+
+void btree::printPreOrder()
+{
+    preOrder(root);
+    cout << endl;
+}
+
+void btree::preOrder(node *leaf)
+{
+    if (leaf != NULL)
+    {
+	cout << leaf->key << "   ";
+	preOrder(leaf->left);
+	preOrder(leaf->right);
+    }
+}
+
+void btree::printInOrder()
+{
+    inOrder(root);
+    cout << endl;
+}
+
+void btree::inOrder(node *leaf)
+{
+    if (leaf != NULL)
+    {
+	inOrder(leaf->left);
+	cout << leaf->key << "   ";
+	inOrder(leaf->right);
+    }
+}
+
+void btree::printLevelOrder()
+{
+    int h = height(root);
+    for (int i = 1; i <= h; i++)
+	levelOrder(root, i);
+    cout << endl;
+}
+
+void btree::levelOrder(node *leaf, int level)
+{
+    if (leaf == NULL)
+	return;
+    else if (level == 1)
+	cout << leaf->key << "   ";
+    else if (level > 1)
+    {
+	levelOrder(leaf->left, level-1);
+	levelOrder(leaf->right,level-1);
+    }
+}
+int btree::height(node* leaf)
+{
+    int lheight, rheight;
+    if (leaf == NULL)
+	return 0;
+    else
+    {
+	lheight = height(leaf->left);
+	rheight = height(leaf->right);
+	if (lheight > rheight)
+	    return (lheight + 1);
+	else
+	    return (rheight + 1);
+    }
+}
+]777;notify;Command completed;cat btree.cpp]0;cshue1@linux-user-110:~/cisc2200/wk15/CHP16EX14]7;file://linux-user-110.dsm.fordham.edu/u/erdos/students/cshue1/cisc2200/wk15/CHP16EX14[cshue1@linux-user-110 CHP16EX14]$ cat main.cpp
+#include <iostream>
+using namespace std;
+
+#include "btree.h"
+#include "btree.cpp"
+
+int main()
+{
+    btree tree;
+
+    tree.insert(30);
+    tree.insert(10);
+    tree.insert(20);
+    tree.insert(40);
+    tree.insert(50);
+
+    cout << "In Order Print: " << endl;
+    tree.printInOrder();
+
+    cout << "Pre Order Print: " << endl;
+    tree.printPreOrder();
+
+    cout << "Post Order Print: " << endl;
+    tree.printPostOrder();
+
+    cout << "Level Order Print: " << endl;
+    tree.printLevelOrder();
+    return 0;
+}
+]777;notify;Command completed;cat main.cpp]0;cshue1@linux-user-110:~/cisc2200/wk15/CHP16EX14]7;file://linux-user-110.dsm.fordham.edu/u/erdos/students/cshue1/cisc2200/wk15/CHP16EX14[cshue1@linux-user-110 CHP16EX14]$ g++ main.pp[K[Kcpp
+]777;notify;Command completed;g++ main.cpp]0;cshue1@linux-user-110:~/cisc2200/wk15/CHP16EX14]7;file://linux-user-110.dsm.fordham.edu/u/erdos/students/cshue1/cisc2200/wk15/CHP16EX14[cshue1@linux-user-110 CHP16EX14]$ ./a.out
+In Order Print: 
+10   20   30   40   50   
+Pre Order Print: 
+30   10   20   40   50   
+Post Order Print: 
+20   10   50   40   30   
+Level Order Print: 
+30   10   40   20   50   
+]777;notify;Command completed;./a.out]0;cshue1@linux-user-110:~/cisc2200/wk15/CHP16EX14]7;file://linux-user-110.dsm.fordham.edu/u/erdos/students/cshue1/cisc2200/wk15/CHP16EX14[cshue1@linux-user-110 CHP16EX14]$ exit
+exit
+
+Script done on Fri 28 Apr 2017 11:33:02 AM EDT

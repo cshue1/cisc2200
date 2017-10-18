@@ -1,0 +1,158 @@
+Script started on Fri 24 Feb 2017 10:59:03 AM EST
+]0;cshue1@erdos:~/cisc2200/wk06/CHP05PP04[cshue1@erdos CHP05PP04]$ cat prefix.h
+/* CHRISTINE SHUE
+   DUE: FEBRUARY 24, 2017
+   PURPOSE: Prefix.h is an interface that creates a class Prefix.
+   This class holds a prefix expression in the form of a string and
+   two stacks separating the operands and the operators.
+*/
+
+#ifndef PREFIX_H
+#define PREFIX_H
+
+class Prefix
+{
+public:
+    Prefix();
+    void getPrefixExp(string);
+    void populateStacks();
+    double evaluate (int,int,char);
+    double calculate();
+    int charToNum(char);
+private:
+    string prefixExp;
+    stack <int> operands;
+    stack <char> operators;
+};
+
+#endif
+]0;cshue1@erdos:~/cisc2200/wk06/CHP05PP04[cshue1@erdos CHP05PP04]$ catp[K prefix.cpp
+/* CHRISTINE SHUE
+   DUE: FEBRUARY 24, 2017
+   PURPOSE: Prefix.cpp is an implementation of the class Prefix that
+   defines all of the member functions needed to evaluate a prefix expression.
+*/
+Prefix::Prefix()
+{
+}
+
+void Prefix::getPrefixExp(string i)
+{
+    prefixExp = i;
+}
+
+void Prefix::populateStacks()
+{
+    for (int i = prefixExp.length()-1; i >= 0; i--)
+    {
+	if (isdigit(prefixExp.at(i)))
+	    operands.push(charToNum(prefixExp.at(i)));
+	else
+	    operators.push(prefixExp.at(i));
+    }
+}
+
+double Prefix::evaluate(int num1, int num2, char sign)
+{
+    switch (sign)
+    {
+    case '+':
+	return num1 + num2;
+    case '-':
+	return num1 - num2;
+    case '*':
+	return num1 * num2;
+    case '/':
+	return num1 / num2;
+    }
+}
+
+double Prefix::calculate()
+{
+    int num1, num2, size = operators.size();
+    double value;
+    char sign;
+
+    for (int i = 0; i < size; i++)
+    {
+	num1 = operands.top();
+	operands.pop();
+	num2 = operands.top();
+	operands.pop();
+	sign = operators.top();
+	operators.pop();
+	value = evaluate(num1,num2,sign);
+	operands.push(value);
+    }
+    return value;
+}
+
+int Prefix::charToNum(char n)
+{
+    switch(n)
+    {
+    case '0':
+	return 0;
+    case '1':
+	return 1;
+    case '2':
+	return 2;
+    case '3':
+	return 3;
+    case '4':
+	return 4;
+    case '5':
+	return 5;
+    case '6':
+	return 6;
+    case '7':
+	return 7;
+    case '8':
+	return 8;
+    case '9':
+	return 9;
+    }
+}
+]0;cshue1@erdos:~/cisc2200/wk06/CHP05PP04[cshue1@erdos CHP05PP04]$ cat prefixMain.cpp
+/* CHRISTINE SHUE
+   DUE: FEBRUARY 24, 2017
+   PURPOSE: prefixMain.cpp is an application that gets a prefix
+   exprssion from the user and uses class Prefix to evaluate the expression.
+*/
+#include <iostream>
+#include <string>
+#include <stack>
+
+using namespace std;
+
+#include "prefix.h"
+#include "prefix.cpp"
+
+int main()
+{
+    char ch;
+    double value;
+    string input;
+    Prefix expression;
+    do
+    {
+	cout << "Please enter a prefix expression:\n\t";
+	getline(cin,input);
+    }   while (input.at(0) != '+' && input.at(0) != '-'
+	    && input.at(0) != '*' && input.at(0) != '/');
+
+    expression.getPrefixExp(input);
+    expression.populateStacks();
+    value = expression.calculate();
+    cout << "Expression evaluates to: " << value << endl;
+    return 0;
+}
+]0;cshue1@erdos:~/cisc2200/wk06/CHP05PP04[cshue1@erdos CHP05PP04]$ g++ prefixMain.cpp
+]0;cshue1@erdos:~/cisc2200/wk06/CHP05PP04[cshue1@erdos CHP05PP04]$ ./a.out
+Please enter a prefix expression:
+	+-*4567
+Expression evaluates to: 21
+]0;cshue1@erdos:~/cisc2200/wk06/CHP05PP04[cshue1@erdos CHP05PP04]$ exit
+exit
+
+Script done on Fri 24 Feb 2017 10:59:51 AM EST

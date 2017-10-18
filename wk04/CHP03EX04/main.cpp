@@ -1,0 +1,56 @@
+/* CHRISTINE SHUE
+   DUE: FEBRUARY 10, 2017
+   PURPOSE: This application allows users to create rectangles.  It
+   uses class Rectangle to calculate its area and perimeter and print
+   out the rectangle's information. */
+
+#include <iostream>
+#include <iomanip>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string>
+
+#include "rectangle.h"
+
+using namespace std;
+
+int main()
+{
+    char input;
+    int wi,li;
+    double wd,ld;
+    while(1)
+    {
+	system("clear");
+        cout << "Enter what type your rectangle's measurements are\n                    (I=int, D=double, or Q=quit): ";
+	cin >> input;
+	if (input == 'Q' || input == 'q')
+	{
+	    break;
+	}
+	else if (input == 'I' || input == 'i')
+        {	
+	    cout << "Please enter the length: ";
+	    cin  >> li;
+	    cout << "Please enter the width: ";
+	    cin  >> wi;
+	    Rectangle<int> temp(li,wi);
+	    temp.printRect();
+	}
+	else if (input == 'D' || input == 'd')
+	{
+	    cout << "Please enter the length: ";
+	    cin  >> ld;
+	    cout << "Please enter the width: ";
+	    cin  >> wd;
+	    Rectangle<double> temp(ld,wd);
+	    temp.printRect();
+	}
+	else
+	{
+	    continue;
+	}
+    
+    }//end while
+    return 0;
+}//end main

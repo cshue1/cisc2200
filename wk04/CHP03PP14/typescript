@@ -1,0 +1,450 @@
+Script started on Fri 10 Feb 2017 05:36:58 AM EST
+]0;cshue1@erdos:~/cisc2200/wk04/CHP03PP14[cshue1@erdos CHP03PP14]$ cat customer.h
+/* CHRISTINE SHUE
+   DUE: FEBRUARY 10, 2017
+   PURPOSE: customer.h declares all of the members and methods for the
+   class Customer.  It also creates a struct transactionType from
+   which a linked list can be created for transactions made by the user. */
+
+#ifndef CUSTOMER_H
+#define CUSTOMER_H
+
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+struct transactionType
+{
+    int transNum;
+    char type;
+    double amt;
+    string merchant;
+    transactionType *link;
+};
+
+class Customer
+{
+private:
+    static int acctNum;
+    string name;
+    double bal;
+    struct transactionType *anchor;
+    struct transactionType *end;
+    int numOfTrans;
+public:
+    Customer(string);
+    void displayCustInfo();
+    char bill();
+    void addTrans (char,double,string);
+    void pay();
+    void calcInterest();
+    double calcCredit();
+    void displayStatement();
+    ~Customer();
+};
+
+#endif
+]0;cshue1@erdos:~/cisc2200/wk04/CHP03PP14[cshue1@erdos CHP03PP14]$ cat customer.cpp
+/* CHRISTINE SHUE
+   DUE: FEBRUARY 10, 2017
+   PURPOSE: customer.cpp is the implementation for class Customer.  It
+   defines the methods that were declared in customer.h.*/
+
+#include "customer.h"
+
+#include <iostream>
+#include <iomanip>
+#include <string>
+
+using namespace std;
+
+Customer::Customer (string n)
+{
+    acctNum++;
+    name       = n;
+    bal        = 0.00;
+    numOfTrans = 0;
+    anchor     = NULL;
+    end        = NULL;
+}
+
+void Customer::displayCustInfo()
+{
+    cout << "      CUSTOMER ID: " << acctNum << endl;
+    cout << "    CUSTOMER NAME: " << name << endl;
+    cout << "BEGINNING BALANCE: " << fixed << showpoint << setprecision(2)
+	 << bal << endl;
+    cout << "  STATEMENT AVAIL: " << bill() << endl;
+}
+
+char Customer::bill()
+{
+    if (numOfTrans == 0)
+	return 'N';
+    else
+	return 'Y';
+}
+
+void Customer::addTrans(char t,double a,string m)
+{
+    struct transactionType *nodePtr;
+    numOfTrans++;
+    if (t == 'd' || t == 'D')
+	bal += a;
+    
+    if (anchor == NULL)
+    {
+	anchor = new transactionType;
+
+	anchor->transNum   = numOfTrans;
+	anchor->type       = t;
+	anchor->amt        = a;
+	anchor->merchant   = m;
+	anchor->link       = NULL;
+
+	end = anchor;
+    
+    }
+    else
+    {
+	nodePtr = new transactionType;
+
+	nodePtr->transNum   = numOfTrans;
+        nodePtr->type       = t;
+        nodePtr->amt        = a;
+        nodePtr->merchant   = m;
+        nodePtr->link       = NULL;
+
+        end->link = nodePtr;
+        end = nodePtr;
+    }
+
+}
+
+void Customer::pay()
+{
+    char ans;
+    double cost;
+    cout << "You owe: $" << fixed << showpoint
+	 << setprecision(2) << calcCredit() << endl;
+    cout << "Would you like to see your statement? (Y/N): ";
+    cin  >> ans;
+    if (ans == 'Y' || ans == 'y')
+	displayStatement();
+    cout << endl << endl << "How much would you like to pay now?: $";
+    cin  >> cost;
+    if (cost == calcCredit())
+    {
+	anchor = NULL;
+	numOfTrans = 0;
+    }
+    bal -= cost;
+    cout << endl << endl << "\t\t\tThank You." << endl;
+    cout << "\t\tYour new balance is: $" << fixed << showpoint
+	 << setprecision(2) << bal << endl;
+}
+
+void Customer::calcInterest()
+{
+    bal = bal * 1.0005;
+}
+
+double Customer::calcCredit()
+{
+    double CreditTot = 0.00;
+    struct transactionType *credit;
+    credit = anchor;
+    while (credit != end)
+    {
+	if (credit->type == 'C' || credit->type == 'c')
+	    CreditTot += credit->amt;
+	credit = credit->link;
+    }
+    if (credit->type == 'C' || credit->type == 'c')
+	CreditTot += credit->amt;
+return  CreditTot;
+	    
+}
+
+void Customer::displayStatement()
+{
+    struct transactionType *display;
+    if (anchor == NULL)
+    {
+	cout << "No transactions found." << endl;
+	return;
+    }
+
+    display = anchor;
+    displayCustInfo();
+    cout << endl << "\t\tINTEREST RATE: 0.05%" << endl;
+    calcInterest();
+    cout << "\t\tBALANCE WITH INTEREST: $" << fixed << showpoint
+	 << setprecision(2) << bal << endl << endl;
+    cout << "\tYOUR STATEMENT:" << endl << endl;
+    while (display != end)
+    {
+	cout << "\t" << setw(3) << display->transNum;
+	if (display->type == 'D')
+	{
+	    cout << "\t" << setw(7) << "DEBIT ";
+	}
+	else
+	    cout << "\t" << setw(7) << "CREDIT ";
+	cout << "\t" << setw(30) << display->merchant;
+	cout << setw(7) << "$" << fixed << showpoint
+	     << setprecision(2) << display->amt << endl;
+	display = display->link;
+    }
+    cout << "\t" << setw(3) << display->transNum;
+     if (display->type == 'D')
+     {
+	 cout << "\t" << setw(7) << "DEBIT ";
+     }
+     else
+	 cout << "\t" << setw(7) << "CREDIT ";
+     cout << "\t" << setw(30) << display->merchant;
+     cout << setw(7) << "$" << fixed << showpoint
+	  << setprecision(2) << display->amt << endl << endl;
+     cout << "\t                  ----------------------------" << endl;
+     cout << "\t                    TOTAL DUE: " << setw(7) << "$" << fixed
+	  << showpoint << setprecision(2) << calcCredit() << endl;
+    
+}
+
+Customer::~Customer()
+{
+}
+
+int Customer::acctNum = 0;
+]0;cshue1@erdos:~/cisc2200/wk04/CHP03PP14[cshue1@erdos CHP03PP14]$ cat main.cpp
+/* CHRISTINE SHUE
+   DUE: FEBRUARY 10, 2017
+   PURPOSE: This application serves as an ADT that represents a credit
+   card account.  It uses class Customer created in customer.h to
+   similate a program that might be used by someone needing to manage
+   their credit card. */
+
+#include "customer.h"
+#include "customer.cpp"
+
+#include <iostream>
+#include <iomanip>
+#include <string>
+
+using namespace std;
+
+void Header(string name)
+{
+    cout << endl << endl;
+    cout << "\t\t\tWELCOME, " << name << "!" << endl;
+    cout << endl;
+}
+
+int main()
+{
+    char input;
+    string name,merchant;
+    double amount;
+    int action;
+    bool done = false;
+
+    system("clear");
+    cout << "WELCOME!\nPlease enter your name: ";
+    getline(cin,name);
+    Customer user(name);
+    cout << "Hi, " << name << "!" << endl;
+    while (!done)
+    {
+	cout << "\tPlease enter a selection:\n"
+	     << "\t\t1 : Display Customer Information\n"
+	     << "\t\t2 : Add A Transaction (Debit/Credit)\n"
+	     << "\t\t3 : View Your Statement\n"
+	     << "\t\t4 : Make a Payment\n"
+	     << "\t\t0 : Quit" << endl;
+	cin  >> action;
+    	switch (action)
+	{
+	case 1:
+	    system("clear");
+	    Header(name);
+	    user.displayCustInfo();
+	    cout << endl << endl << endl;
+	    break;
+	case 2:
+	    system("clear");
+	    Header(name);
+	    cout << "Enter C for Credit or D for debit: ";
+	    cin  >> input;
+	    cout << "Enter the amount of the transaction: ";
+	    cin  >> amount;
+	    cout << "Enter the merchant name: ";
+	    cin.ignore();
+	    getline(cin, merchant);
+	    user.addTrans(input,amount,merchant);
+	    cout << endl << endl << endl;
+	    break;
+	case 3:
+	    system("clear");
+	    Header(name);
+	    user.displayStatement();
+	    cout << endl << endl << endl;
+	    break;
+	case 4:
+	    system("clear");
+	    Header(name);
+	    user.pay();
+	    cout << endl << endl << endl;
+	    break;
+	case 0:
+	    system("clear");
+	    done = true;
+	    break;
+	default:
+	    break;
+	}
+    }
+    return 0;
+}
+
+
+]0;cshue1@erdos:~/cisc2200/wk04/CHP03PP14[cshue1@erdos CHP03PP14]$ g++ main.cpp
+]0;cshue1@erdos:~/cisc2200/wk04/CHP03PP14[cshue1@erdos CHP03PP14]$ ./a.out
+[3J[H[2JWELCOME!
+Please enter your name: Chi ristine Shue
+Hi, Christine Shue!
+	Please enter a selection:
+		1 : Display Customer Information
+		2 : Add A Transaction (Debit/Credit)
+		3 : View Your Statement
+		4 : Make a Payment
+		0 : Quit
+2
+[3J[H[2J
+
+			WELCOME, Christine Shue!
+
+Enter C for Credit or D for debit: D
+Enter the amount of the transaction: 12345.87
+Enter the merchant name: Payroll
+
+
+
+	Please enter a selection:
+		1 : Display Customer Information
+		2 : Add A Transaction (Debit/Credit)
+		3 : View Your Statement
+		4 : Make a Payment
+		0 : Quit
+2
+[3J[H[2J
+
+			WELCOME, Christine Shue!
+
+Enter C for Credit or D for debit: C
+Enter the amount of the transaction: 23.77
+Enter the merchant name: Whole Fo        Trader Joes s
+
+
+
+	Please enter a selection:
+		1 : Display Customer Information
+		2 : Add A Transaction (Debit/Credit)
+		3 : View Your Statement
+		4 : Make a Payment
+		0 : Quit
+2
+[3J[H[2J
+
+			WELCOME, Christine Shue!
+
+Enter C for Credit or D for debit: C
+Enter the amount of the transaction: 3456 .22
+Enter the merchant name: Amazon
+
+
+
+	Please enter a selection:
+		1 : Display Customer Information
+		2 : Add A Transaction (Debit/Credit)
+		3 : View Your Statement
+		4 : Make a Payment
+		0 : Quit
+4
+[3J[H[2J
+
+			WELCOME, Christine Shue!
+
+You owe: $368.99
+Would you like to see your statement? (Y/N): Y
+      CUSTOMER ID: 1
+    CUSTOMER NAME: Christine Shue
+BEGINNING BALANCE: 12345.87
+  STATEMENT AVAIL: Y
+
+		INTEREST RATE: 0.05%
+		BALANCE WITH INTEREST: $12352.04
+
+	YOUR STATEMENT:
+
+	  1	 DEBIT 	                       Payroll      $12345.87
+	  2	CREDIT 	                   Trader Joes      $23.77
+	  3	CREDIT 	                        Amazon      $345.22
+
+	                  ----------------------------
+	                    TOTAL DUE:       $368.99
+
+
+How much would you like to pay now?: $368.99
+
+
+			Thank You.
+		Your new balance is: $11983.05
+
+
+
+	Please enter a selection:
+		1 : Display Customer Information
+		2 : Add A Transaction (Debit/Credit)
+		3 : View Your Statement
+		4 : Make a Payment
+		0 : Quit
+1
+[3J[H[2J
+
+			WELCOME, Christine Shue!
+
+      CUSTOMER ID: 1
+    CUSTOMER NAME: Christine Shue
+BEGINNING BALANCE: 11983.05
+  STATEMENT AVAIL: N
+
+
+
+	Please enter a selection:
+		1 : Display Customer Information
+		2 : Add A Transaction (Debit/Credit)
+		3 : View Your Statement
+		4 : Make a Payment
+		0 : Quit
+3
+[3J[H[2J
+
+			WELCOME, Christine Shue!
+
+No transactions found.
+
+
+
+	Please enter a selection:
+		1 : Display Customer Information
+		2 : Add A Transaction (Debit/Credit)
+		3 : View Your Statement
+		4 : Make a Payment
+		0 : Quit
+0
+[3J[H[2J]0;cshue1@erdos:~/cisc2200/wk04/CHP03PP14[cshue1@erdos CHP03PP14]$ exit
+exit
+
+Script done on Fri 10 Feb 2017 05:38:44 AM EST

@@ -1,0 +1,8 @@
+class reverse
+{
+    public:
+        reverseTheString(string);
+
+    private:
+	int length;
+};

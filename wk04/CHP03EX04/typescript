@@ -1,0 +1,141 @@
+Script started on Fri 10 Feb 2017 11:29:04 AM EST
+]777;notify;Command completed;./a.out]0;cshue1@linux-user-115:~/cisc2200/wk04/CHP03EX04]7;file://linux-user-115.dsm.fordham.edu/u/erdos/students/cshue1/cisc2200/wk04/CHP03EX04[cshue1@linux-user-115 CHP03EX04]$ cat er[K[Krectangle.h
+/* CHRISTINE SHUE
+   DUE: FEBRUARY 10, 2017
+   PURPOSE: rectangle.h creates a template class Rectangle to accept
+   int and double dimensions. It calculates a rectangle's area and
+   perimenter and prints out the rectangle's information. */
+
+#ifndef RECTANGLE_H
+#define RECTANGLE_H
+
+#include <iostream>
+
+using namespace std;
+
+template <class T>
+class Rectangle
+{
+private:
+    T length;
+    T width;
+public:
+    Rectangle()
+    {
+	length = 0;
+	width  = 0;
+    }
+    
+    Rectangle(T l,T w)
+    {
+	length = l;
+	width  = w;
+    }
+    
+    T getLength() const
+    {
+	return length;
+    }
+    
+    void setLength(T l)
+    {
+	length = l;
+    }
+    
+    T getWidth() const
+    {
+	return width;
+    }
+    
+    void setWidth(T w)
+    {
+	width = w;
+    }
+    
+    T getArea() const
+    {
+	return length * width;
+    }
+    
+    T getPerimeter() const
+    {
+	return 2 * length + 2 * width;
+    }
+    
+    T printRect()const
+    {
+	cout << "This rectangle's info is: " << endl;
+	cout << "   LENGTH = " << length << endl;
+	cout << "    WIDTH = " << width << endl;
+	cout << "     AREA = "  << getArea() << endl;
+	cout << "PERIMETER = " << getPerimeter() << endl;
+    }
+    
+    ~Rectangle(){}
+};
+
+#endif
+]777;notify;Command completed;cat rectangle.h]0;cshue1@linux-user-115:~/cisc2200/wk04/CHP03EX04]7;file://linux-user-115.dsm.fordham.edu/u/erdos/students/cshue1/cisc2200/wk04/CHP03EX04[cshue1@linux-user-115 CHP03EX04]$ g[Kcat main.cpp
+/* CHRISTINE SHUE
+   DUE: FEBRUARY 10, 2017
+   PURPOSE: This application allows users to create rectangles.  It
+   uses class Rectangle to calculate its area and perimeter and print
+   out the rectangle's information. */
+
+#include <iostream>
+#include <iomanip>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string>
+
+#include "rectangle.h"
+
+using namespace std;
+
+int main()
+{
+    char input;
+    int wi,li;
+    double wd,ld;
+    while(1)
+    {
+	system("clear");
+        cout << "Enter what type your rectangle's measurements are\n                    (I=int, D=double, or Q=quit): ";
+	cin >> input;
+	if (input == 'Q' || input == 'q')
+	{
+	    break;
+	}
+	else if (input == 'I' || input == 'i')
+        {	
+	    cout << "Please enter the length: ";
+	    cin  >> li;
+	    cout << "Please enter the width: ";
+	    cin  >> wi;
+	    Rectangle<int> temp(li,wi);
+	    temp.printRect();
+	}
+	else if (input == 'D' || input == 'd')
+	{
+	    cout << "Please enter the length: ";
+	    cin  >> ld;
+	    cout << "Please enter the width: ";
+	    cin  >> wd;
+	    Rectangle<double> temp(ld,wd);
+	    temp.printRect();
+	}
+	else
+	{
+	    continue;
+	}
+    
+    }//end while
+    return 0;
+}//end main
+]777;notify;Command completed;cat main.cpp]0;cshue1@linux-user-115:~/cisc2200/wk04/CHP03EX04]7;file://linux-user-115.dsm.fordham.edu/u/erdos/students/cshue1/cisc2200/wk04/CHP03EX04[cshue1@linux-user-115 CHP03EX04]$ g++ main.cpp
+]777;notify;Command completed;g++ main.cpp]0;cshue1@linux-user-115:~/cisc2200/wk04/CHP03EX04]7;file://linux-user-115.dsm.fordham.edu/u/erdos/students/cshue1/cisc2200/wk04/CHP03EX04[cshue1@linux-user-115 CHP03EX04]$ eixt
+bash: eixt: command not found...
+]777;notify;Command completed;eixt]0;cshue1@linux-user-115:~/cisc2200/wk04/CHP03EX04]7;file://linux-user-115.dsm.fordham.edu/u/erdos/students/cshue1/cisc2200/wk04/CHP03EX04[cshue1@linux-user-115 CHP03EX04]$ exit
+exit
+
+Script done on Fri 10 Feb 2017 11:29:48 AM EST

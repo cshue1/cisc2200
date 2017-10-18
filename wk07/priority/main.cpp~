@@ -1,0 +1,33 @@
+#include <iostream>
+using namespace std;
+
+#include "priority.h"
+#include "priority.cpp"
+
+int main()
+{
+    int pri,pos = 0;
+    string name;
+    priority pQ;
+    if (pos <= 10)
+    {
+	do
+	{
+	    pos++;
+	    if (pos <= 10)
+	    {
+		cout << "Enter priority or -1 to quit: ";
+		cin  >> pri;
+		if (pri != -1)
+		{
+		    cout << "Enter name : ";
+		    cin  >> name;
+		    pQ.add(pri,name);
+		    pQ.display();
+    
+		}
+	    }
+	}while (pri != -1 || pos < 10);
+    }
+    return 0;
+}

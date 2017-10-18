@@ -1,0 +1,29 @@
+#ifndef STOCK_H
+#define STOCK_H
+
+struct stockType
+{
+    string symbol;
+    int qty;
+    double price;
+    stockType *link;
+};
+
+class Stock
+{
+private:
+    stockType *topStock;
+    stockType *lastStock;
+    double netWorth;
+    double totalWorth;
+public:
+    Stock();
+    void purchase(string,int,double); //push
+    void sell(); //pop
+    bool isEmpty();
+    void displayPortfolio();
+    void getNetWorth();
+};
+
+
+#endif

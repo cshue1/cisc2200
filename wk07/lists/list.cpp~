@@ -1,0 +1,75 @@
+MAX_STOCKSlist::list()
+{
+    size = 0;
+    for (int i = 0; i < MAX_NAMES; i++)
+	names[i] = "";
+}
+
+bool list::isEmpty()
+{
+    bool rc;
+    if (size == 0)
+	rc = true;
+    else
+	rc = false;
+    return rc;
+}
+
+int list::getLength()
+{
+    return size;
+}
+
+bool list::insert(int pos,string s)
+{
+    bool rc = false;
+    if (pos >= 1 && pos <= 9)
+    {
+	size++;
+	names[pos-1] = s;
+	rc = true;
+    }
+    return rc;
+	    
+}
+
+bool list::remove(int pos)
+{
+}
+
+bool list::clear()
+{
+    for (int i = 0; i < MAX_NAMES; i++)
+	names[i] = "";
+
+    size = 0;
+
+    return true;
+}
+
+string list::getEntry(int pos)
+{
+    if(pos >= 1 && pos <= 9)
+	return names[pos-1];
+    else
+	return NULL;
+}
+
+bool list::replace(int pos,string s)
+{
+    bool rc = false;
+    if(pos >= 1 && pos <= 9)
+    {
+	names[pos-1] = s;
+	rc = true;
+    }
+    return rc;
+}
+
+void list::display()
+{
+    cout << endl << endl;
+    for (int i = 0; i < size; i++)
+	cout << names[i] << "  ";
+    cout << endl << endl;
+}

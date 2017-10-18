@@ -1,0 +1,31 @@
+/* CHRISTINE SHUE
+   DUE: FEBRUARY 17, 2017
+   PURPOSE: This is a UML for the currency rates in the Americas.*/
+
+class Currency
+------------------------------
+- country : string
+- currType : string
+------------------------------
++ Currency : Currency
++ Currency (string,string) : Currency
++ setCurr (string,string) : void
++ getCountry() : string
++ setCountry(string) : void
++ getCurrType() : string
++ setCurrType(string) : void
+
+
+class Money
+------------------------------
+- money : Currency 
+- exchRate : double
+- changeUS : double
+- percChange : double
+------------------------------
++ getExchRate() : double
++ setExchRate(double) : void
++ getChangeUS() : double
++ setChangeUS(double) : void
++ getPercChange() : double
++ setPercChange(double) : void

@@ -1,0 +1,6 @@
+bananas    10
+pears      12
+apples     20
+grapes     30
+oranges     5
+melons     50

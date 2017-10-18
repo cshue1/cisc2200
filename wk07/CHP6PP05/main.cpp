@@ -1,0 +1,71 @@
+/* CHRISTINE SHUE
+   DUE: MARCH 3, 2017
+   PURPOSE: main.cpp is the application for the class Stock.  It
+   allows the user to create a stock portfolio and perform different
+   actions to it.*/
+
+#include <iostream>
+#include <string>
+#include <iomanip>
+
+using namespace std;
+
+#include "stock.h"
+#include "stock.cpp"
+
+int main()
+{
+    Stock portfolio;
+    system ("clear");
+    bool done = false;
+    string symbol;
+    double price;
+    int qty,selection;
+    while (!done)
+    {
+	do
+	{
+	    cout << "MAKE A SELECTION:\n";
+	    cout << "\t1| PURCHASE\n";
+	    cout << "\t2| SELL\n";
+	    cout << "\t3| DISPLAY PORTFOLIO\n";
+	    cout << "\t4| DISPLAY NET WORTH\n";
+	    cout << "\t0| QUIT\n";
+
+	    cin  >> selection;
+	} while (selection != 0 && selection != 1 && selection != 2
+		 && selection != 3 && selection != 4);
+	cout << endl << endl;
+
+	switch (selection)
+	{
+	case 1:
+	    cout << "Enter the symbol of the stock:\t";
+	    cin  >> symbol;
+	    cout << "Enter the number of stocks you would like to buy:\t";
+	    cin  >> qty;
+	    cout << "Enter the price of the stock:\t";
+	    cin  >> price;
+	    
+	    portfolio.purchase(symbol,qty,price);
+	    break;
+	case 2:
+	    portfolio.sell();
+	    break;
+	case 3:
+	    portfolio.displayPortfolio();
+	    break;
+	case 4:
+	    portfolio.getNetWorth();
+	    break;
+	case 0:
+	    done = true;
+	    break;
+	default:
+	    cout << "Please make a valid selection!" << endl;
+	    break;
+	}
+    }
+   
+    return 0;
+}

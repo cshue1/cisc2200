@@ -1,0 +1,431 @@
+Script started on Fri 03 Feb 2017 10:37:32 AM EST
+]0;cshue1@erdos:~/cisc2200/wk02/ShoppingCartHW[cshue1@erdos ShoppingCartHW]$ c++[K[K[Kg++ main.cpp
+]0;cshue1@erdos:~/cisc2200/wk02/ShoppingCartHW[cshue1@erdos ShoppingCartHW]$ cat product.h
+/* CHRISTINE SHUE
+   DUE: FEBRUARY 3, 2017
+   PURPOSE: product.h is an interface for a shopping cart program.
+   It creates a class called product  to be used in the application
+   of creating a shopping cart.*/
+#ifndef PRODUCT_H
+#define PRODUCT_H
+
+#include <iostream>
+
+class product
+{
+   public:
+      product();
+      int  getCurrentSize();
+      bool isEmpty();
+      void add(string, double);
+      bool remove(string);
+      void clear();
+      int  getFrequencyOf(string);
+      bool contains(string);
+      void displayCart();
+      
+   private:
+      struct productType *anchor;
+      int numOfProducts;
+};
+
+#endif // PRODUCT_H
+]0;cshue1@erdos:~/cisc2200/wk02/ShoppingCartHW[cshue1@erdos ShoppingCartHW]$ cat product.cpp
+/* CHRISTINE SHUE
+   DUE: FEBRUARY 3, 2017
+   PURPOSE: product.cpp is the implementation file for the class
+   product.  It implements all of the methods that are declared in the product.h
+   file.*/
+#include <iostream>
+#include <iomanip>
+
+using namespace std;
+
+#include "product.h"
+
+product::product()
+{
+    anchor = NULL;
+    numOfProducts = 0;
+}
+
+int product::getCurrentSize()
+{
+    return numOfProducts;
+}
+
+bool product::isEmpty()
+{
+    if (anchor == NULL)
+	return true;
+    else
+	return false;
+}
+
+void product::add (string name, double cost)
+{
+    struct productType *newP = anchor;
+    newP = new productType;
+    newP->product = name;
+    newP->price = cost;
+    newP->link = anchor;
+    anchor = newP;
+    numOfProducts++;
+}
+
+bool product::remove (string name)
+{
+    if (!contains(name))
+	return 0;
+    productType *temp = anchor;
+    if (anchor -> product == name)
+    {
+	anchor = anchor -> link;
+	-- numOfProducts;
+	return 1;
+    }
+    else
+    {
+	while (temp != NULL)
+	{
+	    if (temp -> link -> product == name)
+	    {
+	         if(temp -> link -> link != NULL)
+	             temp -> link = temp -> link -> link;
+		 else
+	             temp -> link = NULL;
+		 -- numOfProducts;
+	         return 1;
+            }
+	    else
+	        temp = temp -> link;
+	}
+    }
+    return 0;
+}
+
+void product::clear()
+{
+    anchor = NULL;
+    numOfProducts = 0;
+}
+
+int product::getFrequencyOf(string name)
+{
+    int counter = 0;
+    productType *temp = anchor;
+    while (temp != NULL)
+    {
+        if (temp -> product == name)
+            ++ counter;
+        temp = temp -> link;
+    }
+    return counter;
+}
+
+bool product::contains(string name)
+{
+    productType *temp = anchor;
+    while (temp != NULL)
+    {
+	if (temp -> product == name)
+            return 1;
+	temp = temp -> link;
+    }
+    return 0;
+}
+
+void product::displayCart()
+{
+    double total = 0.00;
+    productType *temp = anchor;
+    cout << "------------------ SHOPPING CART ------------------" << endl;
+    while (temp != NULL)
+    {
+        cout << setw(10) << temp->product << fixed << showpoint << setprecision(2)
+	     << "\t\t\t\t" << setw(6) << temp->price << endl;
+        total += temp -> price;
+	temp = temp -> link;
+    }
+    if (numOfProducts == 0)
+	cout << "The cart is empty" << endl;
+    else
+    {
+        cout << "---------------------------------------------------" << endl;
+        cout << "TOTAL NUMBER OF ITEMS : " << numOfProducts << endl;
+        cout << "TOTAL COST : " << fixed << showpoint << setprecision(2) <<total << endl;
+    }
+}
+]0;cshue1@erdos:~/cisc2200/wk02/ShoppingCartHW[cshue1@erdos ShoppingCartHW]$ cat main.cpp
+/* CHRISTINE SHUE
+   DUE: FEBRUARY 3, 2017
+   PURPOSE: This application creates a shopping cart that a
+   user can add or remove items to. */
+#include <iostream>
+#include <string>
+#include <stdlib.h>
+#include <iomanip>
+#include <unistd.h>
+
+using namespace std;
+
+// definition of the node
+struct productType
+{
+   string product;
+   double price;
+   struct productType *link;
+};
+
+#include "product.h"
+#include "product.cpp"
+
+product cart;
+
+int main()
+{
+   string input, prod, price;
+  
+   while (1)
+   {
+      system("clear");
+      cart.displayCart();
+
+      cout << endl << endl;
+      cout << "Enter A=Add, R=Remove, C=Contains, E=empty, or Q to quit : ";
+      getline(cin,input);
+
+      if (input.length() >= 1)
+      {
+         if (input.at(0) == 'Q'|| input.at(0) == 'q')
+         {
+            break;
+         }
+         else if (input.at(0) == 'A' || input.at(0) == 'a') 
+         {
+            cout << endl << endl;
+            cout << " Enter the Product Name (ADD) : ";
+            getline(cin,prod);
+            cout << "Enter the Product Price (ADD) : ";
+            getline(cin,price);
+
+            cart.add(prod, atof(price.c_str()));
+         }
+         else if (input.at(0) == 'R' || input.at(0) == 'r')
+         {
+             if (cart.isEmpty())
+             {
+                cout << endl << endl << "Sorry. The cart is empty." << endl;
+                sleep (3);
+             }
+             else
+	     {
+	         cout << endl << endl;
+                 cout << " Enter the Product Name (REMOVE) : ";
+		 getline(cin,prod);
+		     
+		 if (cart.remove(prod) == true)
+		 {
+		     cout << endl << endl 
+		     << " ***** Product is being removed from the cart!......" << endl;
+		      
+		     sleep (3);
+		 }
+		 else
+		 {
+		     cout << endl << endl 
+		     << " ***** The product was NOT found in the cart! ***** " << endl;
+			     
+		     sleep (3);
+		 }
+	     }
+	 }
+         else if (input.at(0) == 'C' || input.at(0) == 'c')
+	 {
+	     if (cart.isEmpty())
+	     {
+		 cout << endl << endl << "Sorry. The cart is empty." << endl;
+		 sleep (3);
+	     }
+	     else
+	     {
+		 cout << endl << endl;
+		 cout << " Enter the Product Name (CONTAINS) : ";
+		 getline(cin,prod);
+			 
+	         if (cart.contains(prod))
+                 {
+	             cout << endl << endl 
+		     << " ***** Yes. The product is in the cart " << cart.getFrequencyOf(prod) << " times! ***** " << endl;
+		    
+	             sleep (3);
+                 }
+		 else
+		 {
+		     cout << endl << endl 
+		     << " ***** No. The product is not in the cart! ***** " << endl;
+				 
+	             sleep (3);
+	         }
+	     }
+	 }
+	 else if (input.at(0) == 'E' || input.at(0) == 'e')
+	 {
+	     if (cart.isEmpty())
+	     {
+	         cout << endl << endl << "The cart is already empty." << endl;
+                 sleep (3);
+	     }
+	     else
+	     {
+                 cart.clear();
+	         cout << endl << endl 
+			  << " ***** The cart is being emptied!......" << endl;
+		     
+		 sleep (3);
+	     }
+	 }
+         else
+         {
+	     continue;
+         }
+      }
+   }// end while
+   
+   return 0;
+}
+]0;cshue1@erdos:~/cisc2200/wk02/ShoppingCartHW[cshue1@erdos ShoppingCartHW]$ ./a.out
+[3J[H[2J------------------ SHOPPING CART ------------------
+The cart is empty
+
+
+Enter A=Add, R=Remove, C=Contains, E=empty, or Q to quit : a
+
+
+ Enter the Product Name (ADD) : corn
+Enter the Product Price (ADD) : 0.99
+[3J[H[2J------------------ SHOPPING CART ------------------
+      corn				  0.99
+---------------------------------------------------
+TOTAL NUMBER OF ITEMS : 1
+TOTAL COST : 0.99
+
+
+Enter A=Add, R=Remove, C=Contains, E=empty, or Q to quit : a
+
+
+ Enter the Product Name (ADD) : tortillas
+Enter the Product Price (ADD) : 2.49
+[3J[H[2J------------------ SHOPPING CART ------------------
+ tortillas				  2.49
+      corn				  0.99
+---------------------------------------------------
+TOTAL NUMBER OF ITEMS : 2
+TOTAL COST : 3.48
+
+
+Enter A=Add, R=Remove, C=Contains, E=empty, or Q to quit : a
+
+
+ Enter the Product Name (ADD) : spinach
+Enter the Product Price (ADD) : 1.99
+[3J[H[2J------------------ SHOPPING CART ------------------
+   spinach				  1.99
+ tortillas				  2.49
+      corn				  0.99
+---------------------------------------------------
+TOTAL NUMBER OF ITEMS : 3
+TOTAL COST : 5.47
+
+
+Enter A=Add, R=Remove, C=Contains, E=empty, or Q to quit : c
+
+
+ Enter the Product Name (CONTAINS) : cheese
+
+
+ ***** No. The product is not in the cart! ***** 
+[3J[H[2J------------------ SHOPPING CART ------------------
+   spinach				  1.99
+ tortillas				  2.49
+      corn				  0.99
+---------------------------------------------------
+TOTAL NUMBER OF ITEMS : 3
+TOTAL COST : 5.47
+
+
+Enter A=Add, R=Remove, C=Contains, E=empty, or Q to quit : a
+
+
+ Enter the Product Name (ADD) : cheese
+Enter the Product Price (ADD) : 3.50
+[3J[H[2J------------------ SHOPPING CART ------------------
+    cheese				  3.50
+   spinach				  1.99
+ tortillas				  2.49
+      corn				  0.99
+---------------------------------------------------
+TOTAL NUMBER OF ITEMS : 4
+TOTAL COST : 8.97
+
+
+Enter A=Add, R=Remove, C=Contains, E=empty, or Q to quit : r
+
+
+ Enter the Product Name (REMOVE) : spinach
+
+
+ ***** Product is being removed from the cart!......
+[3J[H[2J------------------ SHOPPING CART ------------------
+    cheese				  3.50
+ tortillas				  2.49
+      corn				  0.99
+---------------------------------------------------
+TOTAL NUMBER OF ITEMS : 3
+TOTAL COST : 6.98
+
+
+Enter A=Add, R=Remove, C=Contains, E=empty, or Q to quit : a
+
+
+ Enter the Product Name (ADD) : lettuce
+Enter the Product Price (ADD) : 2.00
+[3J[H[2J------------------ SHOPPING CART ------------------
+   lettuce				  2.00
+    cheese				  3.50
+ tortillas				  2.49
+      corn				  0.99
+---------------------------------------------------
+TOTAL NUMBER OF ITEMS : 4
+TOTAL COST : 8.98
+
+
+Enter A=Add, R=Remove, C=Contains, E=empty, or Q to quit : a
+
+
+ Enter the Product Name (ADD) : beans
+Enter the Product Price (ADD) : 0.0 99
+[3J[H[2J------------------ SHOPPING CART ------------------
+     beans				  0.99
+   lettuce				  2.00
+    cheese				  3.50
+ tortillas				  2.49
+      corn				  0.99
+---------------------------------------------------
+TOTAL NUMBER OF ITEMS : 5
+TOTAL COST : 9.97
+
+
+Enter A=Add, R=Remove, C=Contains, E=empty, or Q to quit : e
+
+
+ ***** The cart is being emptied!......
+[3J[H[2J------------------ SHOPPING CART ------------------
+The cart is empty
+
+
+Enter A=Add, R=Remove, C=Contains, E=empty, or Q to quit : q
+]0;cshue1@erdos:~/cisc2200/wk02/ShoppingCartHW[cshue1@erdos ShoppingCartHW]$ exit
+exit
+
+Script done on Fri 03 Feb 2017 10:40:48 AM EST
